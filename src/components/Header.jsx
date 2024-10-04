@@ -8,7 +8,7 @@ import DropdownMenu from "./DropdownMenu";
 import { Link } from "react-router-dom";
 // logo + name, navigation, cart
 
-const giaynamnavs = [
+export const giaynamnavs = [
     { title: "Giày chạy bộ", link: "/abc" },
     { title: "Giày cầu lông", link: "/abc" },
     { title: "Giày tây", link: "/abc" },
@@ -16,7 +16,7 @@ const giaynamnavs = [
     { title: "Sandal", link: "/abc" },
 ];
 
-const giaynunavs = [
+export const giaynunavs = [
     { title: "Giày chạy bộ", link: "/abc" },
     { title: "Giày cầu lông", link: "/abc" },
     { title: "Giày cao gót", link: "/abc" },
@@ -25,7 +25,7 @@ const giaynunavs = [
     { title: "Boot", link: "/abc" },
 ];
 
-const giayTreEmNavs = [
+export const giayTreEmNavs = [
     { title: "Giày thể thao", link: "/abc" },
     { title: "Sandal", link: "/abc" },
     { title: "Dép", link: "/abc" },
