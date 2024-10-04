@@ -1,31 +1,55 @@
-.container
-{
-    width: 250px;
+.container {
+    width: calc((100% - 50px) / 5);
     background-color: white;
-    margin: 0 5px 10px;
+    margin: 0 5px 16px;
     transition: 150ms;
 }
 
-.product-img
-{
+.product-img {
     width: 100%;
     aspect-ratio: 1/1;
     cursor: pointer;
 }
 
-.product-info
-{
+.product-info {
     padding: 0 6px;
 }
 
-.product-title
-{
+.product-title {
     margin-bottom: 6px;
     cursor: pointer;
 }
 
-.container:hover
-{
+.container:hover {
     box-shadow: 0 2px 6px rgb(199, 199, 199);
     transform: translateY(-2px);
+}
+
+
+@media screen and (max-width: 1200px)
+{
+    .container {
+        width: calc((100% - 50px) / 4);
+    }
+} 
+
+@media screen and (max-width: 800px)
+{
+    .container {
+        width: calc((100% - 50px) / 3);
+    }
+} 
+
+
+@media screen and (max-width: 600px)
+{
+    .container {
+        width: calc((100% - 50px) / 2);
+    }
+} 
+
+.container.fixed-size
+{
+    width: 240px;
+    flex-shrink: 0;
 }

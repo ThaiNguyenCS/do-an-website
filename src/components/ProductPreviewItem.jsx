@@ -5,7 +5,7 @@ import { formatPrice } from "../utils/priceFormatter";
 const ProductPreviewItem = (props) => {
     return (
         <>
-            <div className={styles["container"]}>
+            <div className={`${styles["container"]} ${props.isFixedSize ? styles["fixed-size"] : ""}`}>
                 <img src={props.product.imgSource || ""} className={styles["product-img"]}></img>
                 <div className={styles["product-info"]}>
                     <div>số size, số màu sắc</div>
