@@ -6,6 +6,7 @@
     min-width: 100px;
     padding: 4px;
     display: flex;
+    user-select: none;
     justify-content: space-between;
     align-items: center;
 }
@@ -15,6 +16,7 @@
 {
     font-size: 0.9rem;
     font-weight: 500;
+    margin-right: 20px;
 }
 
 .arrow-icon
@@ -30,11 +32,23 @@
 
 .filter-option-list
 {
-    top: 100%;
+    top: calc(100% + 20px);
+    border: 1px solid rgb(210, 210, 210);
+    padding: 20px 10px;
+    cursor: auto;
     left: 0;
+    min-width: 400px;
+    pointer-events: auto;
+    border-radius: 10px;
     background-color: white;
     z-index: 1000;
     right: 0;
     position: absolute;
     height: 200px;
+    display: none;
+}
+
+.filter-option-list.active
+{
+    display: block;
 }

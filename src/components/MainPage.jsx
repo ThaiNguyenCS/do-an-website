@@ -5,6 +5,7 @@ import ProductPreviewItem from "./ProductPreviewItem";
 import { dummyProducts } from "../data/products";
 import Filter from "./Filter";
 import Collection from "./Collection";
+import SearchBar from "./SearchBar";
 // some banners
 // some preview collections (hot trend, ...)
 
@@ -12,6 +13,7 @@ const MainPage = () => {
     return (
         <>
             <div className={styles["container"]}>
+                <SearchBar/>
                 <MainPageNav />
                 <Collection />
                 <Filter />

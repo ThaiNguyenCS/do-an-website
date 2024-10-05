@@ -13,7 +13,6 @@ const Filter = () => {
                         <img src={IcFilter} alt="Filter Icon" style={{ width: "1.5rem" }} />
                         <FilterOption isExpand={expand} optionNum={0} setExpand={setExpand}/>
                         <FilterOption isExpand={expand} optionNum={1} setExpand={setExpand}/>
-                        <FilterOption isExpand={expand} optionNum={2} setExpand={setExpand}/>
                     </div>
                 </div>
                 <div className={styles["seleted-options"]}></div>
