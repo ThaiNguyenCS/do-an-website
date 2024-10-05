@@ -4,7 +4,8 @@ import styles from "./MainPage.module.css";
 import ProductPreviewItem from "./ProductPreviewItem";
 import { dummyProducts } from "../data/products";
 import Filter from "./Filter";
-import Collection from "./Collection";
+import SearchBar from "./SearchBar";
+import CollectionSection from "./CollectionSection";
 // some banners
 // some preview collections (hot trend, ...)
 
@@ -12,14 +13,15 @@ const MainPage = () => {
     return (
         <>
             <div className={styles["container"]}>
+                <SearchBar />
                 <MainPageNav />
-                <Collection />
-                <Filter />
+                <CollectionSection />
+                {/* <Filter />
                 <div className={styles["product-flex-container"]}>
                     {dummyProducts.map((product) => (
                         <ProductPreviewItem product={product} />
                     ))}
-                </div>
+                </div> */}
             </div>
         </>
     );

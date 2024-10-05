@@ -36,6 +36,7 @@
     position: absolute;
     top: var(--header-height);
     left: 0;
+    background-color: white;
     pointer-events: none;
     transition: 150ms;
 }   

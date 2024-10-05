@@ -9,11 +9,11 @@ import { Link } from "react-router-dom";
 // logo + name, navigation, cart
 
 export const giaynamnavs = [
-    { title: "Giày chạy bộ", link: "/abc" },
-    { title: "Giày cầu lông", link: "/abc" },
-    { title: "Giày tây", link: "/abc" },
-    { title: "Giày đá bóng", link: "/abc" },
-    { title: "Sandal", link: "/abc" },
+    { title: "Giày chạy bộ", link: "/collections/giay-chay-bo-nam" },
+    { title: "Giày cầu lông", link: "/collections/giay-cau-long-nam" },
+    { title: "Giày tây", link: "/collections/giay-tay-nam" },
+    { title: "Giày đá bóng", link: "/collections/giay-da-bong-nam" },
+    { title: "Sandal", link: "/collections/sandal-nam" },
 ];
 
 export const giaynunavs = [

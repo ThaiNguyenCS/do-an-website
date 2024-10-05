@@ -1,11 +1,11 @@
 import React, { useEffect, useRef, useState } from "react";
-import styles from "./Collection.module.css";
+import styles from "./CollectionSection.module.css";
 import ProductPreviewItem from "./ProductPreviewItem";
 import { dummyProducts } from "../data/products";
 import { IoIosArrowForward } from "react-icons/io";
 import { IoIosArrowBack } from "react-icons/io";
 
-const Collection = (props) => {
+const CollectionSection = (props) => {
     const sliderRef = useRef(null);
     const [leftButton, setLeftButton] = useState(false);
     const [rightButton, setRightButton] = useState(false);
@@ -74,4 +74,4 @@ const Collection = (props) => {
     );
 };
 
-export default Collection;
+export default CollectionSection;

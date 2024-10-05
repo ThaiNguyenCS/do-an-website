@@ -16,7 +16,7 @@ const router = createBrowserRouter([
                 element: <MainPage />,
             },
             {
-                path: "collection/:collectionName",
+                path: "collections/:collectionName",
             },
             // payment screen
             {

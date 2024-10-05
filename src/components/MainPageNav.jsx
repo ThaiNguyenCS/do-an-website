@@ -17,7 +17,7 @@ const MainPageNav = () => {
                             setActiveNav(0);
                         }}
                     >
-                        &nbsp;GIÀY NAM&nbsp;
+                        GIÀY NAM
                     </li>
                     <li
                         className={`${styles["nav-parent-item"]} ${activeNav === 1 ? styles["active"] : ""}`}
