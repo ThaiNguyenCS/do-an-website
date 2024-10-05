@@ -11,7 +11,7 @@ const router = createBrowserRouter([
         children: [
             // view a specific collection
             {
-                path: "collection/:collectionName",
+                path: "collections/:collectionName",
             },
             // payment screen
             {
