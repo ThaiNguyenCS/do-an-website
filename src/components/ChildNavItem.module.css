@@ -24,3 +24,8 @@
     cursor: pointer;
     margin-top: 3px;
 }
+
+.nav-icon-container.active
+{
+    background-color: #FFC107;
+}

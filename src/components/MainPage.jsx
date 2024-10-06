@@ -16,12 +16,7 @@ const MainPage = () => {
                 <SearchBar />
                 <MainPageNav />
                 <CollectionSection />
-                {/* <Filter />
-                <div className={styles["product-flex-container"]}>
-                    {dummyProducts.map((product) => (
-                        <ProductPreviewItem product={product} />
-                    ))}
-                </div> */}
+               
             </div>
         </>
     );

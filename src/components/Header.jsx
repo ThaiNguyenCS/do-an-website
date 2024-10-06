@@ -6,30 +6,9 @@ import { FaRegUser } from "react-icons/fa";
 import { FiShoppingCart } from "react-icons/fi";
 import DropdownMenu from "./DropdownMenu";
 import { Link } from "react-router-dom";
+import { giaynamnavs, giaynunavs, giayTreEmNavs } from "../utils/urlMapping";
 // logo + name, navigation, cart
 
-export const giaynamnavs = [
-    { title: "Giày chạy bộ", link: "/collections/giay-chay-bo-nam" },
-    { title: "Giày cầu lông", link: "/collections/giay-cau-long-nam" },
-    { title: "Giày tây", link: "/collections/giay-tay-nam" },
-    { title: "Giày đá bóng", link: "/collections/giay-da-bong-nam" },
-    { title: "Sandal", link: "/collections/sandal-nam" },
-];
-
-export const giaynunavs = [
-    { title: "Giày chạy bộ", link: "/abc" },
-    { title: "Giày cầu lông", link: "/abc" },
-    { title: "Giày cao gót", link: "/abc" },
-    { title: "Giày búp bê", link: "/abc" },
-    { title: "Sandal", link: "/abc" },
-    { title: "Boot", link: "/abc" },
-];
-
-export const giayTreEmNavs = [
-    { title: "Giày thể thao", link: "/abc" },
-    { title: "Sandal", link: "/abc" },
-    { title: "Dép", link: "/abc" },
-];
 
 const Header = () => {
     return (
