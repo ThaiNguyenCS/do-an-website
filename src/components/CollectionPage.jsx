@@ -1,4 +1,4 @@
-import React, { createContext, Suspense, useContext, useEffect, useState } from "react";
+import React, { createContext, Suspense, useContext, useEffect, useRef, useState } from "react";
 import styles from "./CollectionPage.module.css";
 const apiURL = import.meta.env.VITE_API_URL;
 import axios from "axios";
@@ -8,7 +8,7 @@ import { dummyProducts } from "../data/products";
 import ProductPreviewItem from "./ProductPreviewItem";
 import MainPageNav from "./MainPageNav";
 import { urlMap } from "../utils/urlMapping";
-
+import { getFilterOption, orderFilterOptions } from "../utils/filter";
 const CollectionPageContext = createContext({});
 /*
     params:
@@ -40,41 +40,63 @@ const loader = async ({ request, params }) => {
 const action = async ({ request, params }) => {};
 
 const CollectionPage = () => {
+    console.log("CollecionPage render");
+
+    const [activeNav, setActiveNav] = useState(0);
+    const [activeChildNav, setActiveChildNav] = useState("");
     const { data } = useLoaderData();
     const navigate = useNavigate();
     const location = useLocation();
-    const [filterCondition, setFilterCondition] = useState({
-        minRating: 0,
-        priceRange: { min: -1, max: -1 },
-        sortBy: "",
-        sortOrder: "",
-    });
+    const isNavigate = useRef(true); // to prevent re-navigate when user navigate to another location 
+    const [filterCondition, setFilterCondition] = useState({}); // filter options of the left section
+
+    const [orderFilterCondition, setOrderFilterCondition] = useState(0);
+    // filter options of the right section
 
     const priceRange = { min: 0, max: 9999999 };
 
     useEffect(() => {
-        console.log(filterCondition);
-        const queryString = new URLSearchParams();
-        if (filterCondition.minRating !== 0) queryString.append("minRating", filterCondition.minRating);
-        if (filterCondition.priceRange.min !== -1 && filterCondition.priceRange.max !== -1)
-            queryString.append(
-                "priceRange",
-                `${Math.floor(filterCondition.priceRange.min)}-${Math.ceil(filterCondition.priceRange.max)}`
-            );
-        if (filterCondition.sortBy) queryString.append("sortBy", filterCondition.sortBy);
-        if (filterCondition.sortOrder) queryString.append("sortOrder", filterCondition.sortOrder);
-        navigate(`${location.pathname}?${queryString.toString()}`);
-    }, [filterCondition]);
+        if (isNavigate.current) {
+            const queryString = new URLSearchParams();
+            if (filterCondition.minRating) queryString.append("minRating", filterCondition.minRating);
+            if (filterCondition.priceRange)
+                queryString.append(
+                    "priceRange",
+                    `${Math.floor(filterCondition.priceRange.min)}-${Math.ceil(filterCondition.priceRange.max)}`
+                );
+            if (orderFilterCondition !== 0) {
+                const filterOption = getFilterOption(orderFilterCondition);
+                queryString.append("sortBy", filterOption.sortBy);
+                queryString.append("sortOrder", filterOption.sortOrder);
+            }
+            navigate(`${location.pathname}?${queryString.toString()}`);
+        }
+        else
+        {
+            isNavigate.current = true
+        }
+    }, [filterCondition, orderFilterCondition]);
 
-    const requestURL = () => {
-        console.log("requestURL in CollectionPage");
-    };
+   
 
     return (
         <>
             <section className={styles["container"]}>
-                <MainPageNav />
-                <CollectionPageContext.Provider value={{ requestURL, filterCondition, setFilterCondition, priceRange }}>
+                <CollectionPageContext.Provider
+                    value={{
+                        filterCondition,
+                        setFilterCondition,
+                        priceRange,
+                        orderFilterCondition,
+                        setOrderFilterCondition,
+                        activeChildNav,
+                        activeNav,
+                        setActiveChildNav,
+                        setActiveNav,
+                        isNavigate,
+                    }}
+                >
+                    <MainPageNav />
                     <Filter />
                 </CollectionPageContext.Provider>
                 <Suspense fallback={<div>Loading...</div>}>

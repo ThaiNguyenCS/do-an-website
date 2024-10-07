@@ -2,14 +2,21 @@ import React from "react";
 import styles from "./ChildNavItem.module.css";
 import { Link, useNavigate } from "react-router-dom";
 import { useMainPageNavContext } from "./MainPageNav";
+import { useCollectionPageContext } from "./CollectionPage";
 
 const ChildNavItem = (props) => {
     const navigate = useNavigate();
-    const { activeChildNav, setActiveChildNav } = useMainPageNavContext();
+    // const { activeChildNav, setActiveChildNav } = useMainPageNavContext();
+    const { setFilterCondition, setOrderFilterCondition, activeChildNav, setActiveChildNav, isNavigate } =
+        useCollectionPageContext();
     function navigateToCollection() {
         setActiveChildNav(props.item.link); // mark visited this link
+        isNavigate.current = false;
+        setFilterCondition({}); // reset filter
+        setOrderFilterCondition(0); // reset filter
         navigate(props.item.link);
     }
+
     return (
         <>
             <li className={styles["nav-item"]}>

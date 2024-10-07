@@ -56,7 +56,7 @@ const FilterOption = (props) => {
                     ) : (
                         ""
                     )}
-                    {props.optionNum === 1 ? <PriceSlider range={options[1].range} /> : ""}
+                    {props.optionNum === 1 ? <PriceSlider /> : ""}
                 </div>
             </div>
         </>

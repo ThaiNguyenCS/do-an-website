@@ -16,7 +16,7 @@ const urlMap = {
 };
 
 export const giaynamnavs = [
-    { title: "Giày chạy bộ", link: "/collections/giay-chay-bo-nam" },
+    { title: "Giày chạy bộ", link: "/collections/giay-chay-bo-nam", parent: 0 },
     { title: "Giày cầu lông", link: "/collections/giay-cau-long-nam" },
     { title: "Giày tây", link: "/collections/giay-tay-nam" },
     { title: "Giày đá bóng", link: "/collections/giay-da-bong-nam" },
