@@ -2,7 +2,7 @@ import React, { createContext, memo, useContext, useEffect, useState } from "rea
 import styles from "./MainPageNav.module.css";
 import ChildNavItem from "./ChildNavItem";
 import ProductPreviewItem from "./ProductPreviewItem";
-import { giaynamnavs, giaynunavs, giayTreEmNavs, navs } from "../utils/urlMapping";
+import {navs } from "../utils/urlMapping";
 import { useLocation } from "react-router-dom";
 import { useCollectionPageContext } from "./CollectionPage";
 

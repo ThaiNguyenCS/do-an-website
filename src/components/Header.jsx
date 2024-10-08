@@ -6,7 +6,6 @@ import { FaRegUser } from "react-icons/fa";
 import { FiShoppingCart } from "react-icons/fi";
 import DropdownMenu from "./DropdownMenu";
 import { Link } from "react-router-dom";
-import { giaynamnavs, giaynunavs, giayTreEmNavs } from "../utils/urlMapping";
 // logo + name, navigation, cart
 
 const Header = () => {
@@ -22,19 +21,19 @@ const Header = () => {
                     <div className={styles["nav-button-container"]}>
                         GIÀY NAM
                         <div className={styles["dropdown-menu-wrapper"]}>
-                            <DropdownMenu navList={giaynamnavs} />
+                            <DropdownMenu parentNav={0} />
                         </div>
                     </div>
                     <div className={styles["nav-button-container"]}>
                         GIÀY NỮ
                         <div className={styles["dropdown-menu-wrapper"]}>
-                            <DropdownMenu navList={giaynunavs} />
+                            <DropdownMenu parentNav={1} />
                         </div>
                     </div>
                     <div className={styles["nav-button-container"]}>
                         TRẺ EM
                         <div className={styles["dropdown-menu-wrapper"]}>
-                            <DropdownMenu navList={giayTreEmNavs} />
+                            <DropdownMenu parentNav={2} />
                         </div>
                     </div>
                 </nav>
