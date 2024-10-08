@@ -5,6 +5,7 @@ import App from "./App.jsx";
 import "./index.css";
 import MainPage from "./components/MainPage.jsx";
 import CollectionPage, { loader as collectionPageLoader} from "./components/CollectionPage.jsx";
+import SearchPage, { loader as searchPageLoader} from "./components/SearchPage.jsx";
 
 const router = createBrowserRouter([
     {
@@ -40,6 +41,11 @@ const router = createBrowserRouter([
             {
                 path: "signup",
             },
+            {
+                path: "search",
+                element: <SearchPage/>,
+                loader: searchPageLoader
+            }
         ],
     },
 ]);
