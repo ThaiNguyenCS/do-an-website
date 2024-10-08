@@ -9,13 +9,14 @@ import { Link } from "react-router-dom";
 import { giaynamnavs, giaynunavs, giayTreEmNavs } from "../utils/urlMapping";
 // logo + name, navigation, cart
 
-
 const Header = () => {
     return (
         <>
             <div className={styles["container"]}>
                 <div className={styles["logo-container"]}>
-                    <img src={dummyLogo} alt="App Logo" className={styles["app-logo"]} />
+                    <Link to={"/"}>
+                        <img src={dummyLogo} alt="App Logo" className={styles["app-logo"]} />
+                    </Link>
                 </div>
                 <nav className={styles["navigation-container"]}>
                     <div className={styles["nav-button-container"]}>

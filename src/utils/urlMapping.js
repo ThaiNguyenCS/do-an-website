@@ -15,27 +15,28 @@ const urlMap = {
     "giay-the-thao-tre-em": "Giày thể thao kid",
 };
 
-export const giaynamnavs = [
+export const navs = [
     { title: "Giày chạy bộ", link: "/collections/giay-chay-bo-nam", parent: 0 },
-    { title: "Giày cầu lông", link: "/collections/giay-cau-long-nam" },
-    { title: "Giày tây", link: "/collections/giay-tay-nam" },
-    { title: "Giày đá bóng", link: "/collections/giay-da-bong-nam" },
-    { title: "Sandal", link: "/collections/sandal-nam" },
-];
+    { title: "Giày cầu lông", link: "/collections/giay-cau-long-nam", parent: 0 },
+    { title: "Giày tây", link: "/collections/giay-tay-nam", parent: 0 },
+    { title: "Giày đá bóng", link: "/collections/giay-da-bong-nam", parent: 0 },
+    { title: "Sandal", link: "/collections/sandal-nam", parent: 0 },
+    { title: "Giày chạy bộ", link: "/collections/giay-chay-bo-nu", parent: 1 },
+    { title: "Giày cầu lông", link: "/collections/giay-cau-long-nu", parent: 1 },
+    { title: "Giày cao gót", link: "/collections/giay-cao-got", parent: 1 },
+    { title: "Giày búp bê", link: "/collections/giay-bup-be", parent: 1 },
+    { title: "Sandal", link: "/collections/sandal-nu", parent: 1 },
+    { title: "Boot", link: "/collections/boot-nu", parent: 1 },
+    { title: "Giày thể thao", link: "/collections/giay-the-thao-tre-em", parent: 2 },
+    { title: "Sandal", link: "/collections/sandal-tre-em", parent: 2 },
+    { title: "Dép", link: "/collections/dep-tre-em", parent: 2 },
+]
 
-export const giaynunavs = [
-    { title: "Giày chạy bộ", link: "/collections/giay-chay-bo-nu" },
-    { title: "Giày cầu lông", link: "/collections/giay-cau-long-nu" },
-    { title: "Giày cao gót", link: "/collections/giay-cao-got" },
-    { title: "Giày búp bê", link: "/collections/giay-bup-be" },
-    { title: "Sandal", link: "/collections/sandal-nu" },
-    { title: "Boot", link: "/collections/boot-nu" },
-];
+function findParentNumByLink (link)
+{
+    let nav = navs.find(nav => nav.link === link);
+    return nav?.parent;
+} 
 
-export const giayTreEmNavs = [
-    { title: "Giày thể thao", link: "/collections/giay-the-thao-tre-em" },
-    { title: "Sandal", link: "/collections/sandal-tre-em" },
-    { title: "Dép", link: "/collections/dep-tre-em" },
-];
 
-export { urlMap };
+export { urlMap, findParentNumByLink };

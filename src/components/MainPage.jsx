@@ -14,7 +14,6 @@ const MainPage = () => {
         <>
             <div className={styles["container"]}>
                 <SearchBar />
-                <MainPageNav />
                 <CollectionSection />
                
             </div>

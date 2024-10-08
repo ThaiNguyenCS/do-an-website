@@ -7,7 +7,7 @@ import Filter from "./Filter";
 import { dummyProducts } from "../data/products";
 import ProductPreviewItem from "./ProductPreviewItem";
 import MainPageNav from "./MainPageNav";
-import { urlMap } from "../utils/urlMapping";
+import { findParentNumByLink, urlMap } from "../utils/urlMapping";
 import { getFilterOption, orderFilterOptions } from "../utils/filter";
 const CollectionPageContext = createContext({});
 /*
@@ -42,12 +42,11 @@ const action = async ({ request, params }) => {};
 const CollectionPage = () => {
     console.log("CollecionPage render");
 
-    const [activeNav, setActiveNav] = useState(0);
-    const [activeChildNav, setActiveChildNav] = useState("");
+    const [activeNav, setActiveNav] = useState({ parentNum: 0 }); // for selecting the parent nav of mainpagenav
     const { data } = useLoaderData();
     const navigate = useNavigate();
     const location = useLocation();
-    const isNavigate = useRef(true); // to prevent re-navigate when user navigate to another location 
+    const isNavigate = useRef(true); // to prevent re-navigate when user navigate to another location
     const [filterCondition, setFilterCondition] = useState({}); // filter options of the left section
 
     const [orderFilterCondition, setOrderFilterCondition] = useState(0);
@@ -70,14 +69,19 @@ const CollectionPage = () => {
                 queryString.append("sortOrder", filterOption.sortOrder);
             }
             navigate(`${location.pathname}?${queryString.toString()}`);
-        }
-        else
-        {
-            isNavigate.current = true
+        } else {
+            isNavigate.current = true;
         }
     }, [filterCondition, orderFilterCondition]);
 
-   
+    useEffect(() => {
+        if (activeNav.link !== location.pathname) {
+            setActiveNav({ link: location.pathname, parentNum: findParentNumByLink(location.pathname) }); // set to the newest URL
+            isNavigate.current = false;
+            setFilterCondition({}); // reset filter
+            setOrderFilterCondition(0); // reset filter
+        }
+    }, [location]);
 
     return (
         <>
@@ -89,9 +93,7 @@ const CollectionPage = () => {
                         priceRange,
                         orderFilterCondition,
                         setOrderFilterCondition,
-                        activeChildNav,
                         activeNav,
-                        setActiveChildNav,
                         setActiveNav,
                         isNavigate,
                     }}
