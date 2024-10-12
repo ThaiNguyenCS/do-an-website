@@ -4,6 +4,9 @@ import { createBrowserRouter, RouterProvider } from "react-router-dom";
 import App from "./App.jsx";
 import "./index.css";
 import MainPage from "./components/MainPage.jsx";
+import LoginScreen from './screen/LoginScreen.jsx'
+import NotFoundScreen from './screen/NotFoundScreen.jsx';
+import RegisterScreen from './screen/RegisterScreen.jsx';
 import CollectionPage, { loader as collectionPageLoader } from "./components/CollectionPage.jsx";
 import SearchPage, { loader as searchPageLoader } from "./components/SearchPage.jsx";
 import Cart from "./components/Cart.jsx";
@@ -37,18 +40,25 @@ const router = createBrowserRouter([
             },
             {
                 path: "login",
+                element: <LoginScreen />,
             },
             {
-                path: "signup",
+                path: "register",
+                element: <RegisterScreen />,
             },
             {
                 path: "search",
                 element: <SearchPage />,
                 loader: searchPageLoader,
             },
+            {
+                path: "*",
+                element: <NotFoundScreen />, // Route 404
+            },
         ],
     },
 ]);
+
 
 createRoot(document.getElementById("root")).render(
     <StrictMode>
