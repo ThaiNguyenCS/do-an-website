@@ -34,6 +34,8 @@ const RegisterScreen = () => {
           }),
         },
       );
+      console.log("Register response", response);
+      
 
       if (response.ok) {
         setMessage("Đăng ký thành công!");

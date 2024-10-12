@@ -4,9 +4,9 @@ import { createBrowserRouter, RouterProvider } from "react-router-dom";
 import App from "./App.jsx";
 import "./index.css";
 import MainPage from "./components/MainPage.jsx";
-import LoginScreen from './screen/LoginScreen.jsx'
-import NotFoundScreen from './screen/NotFoundScreen.jsx';
-import RegisterScreen from './screen/RegisterScreen.jsx';
+import LoginScreen from './components/LoginScreen.jsx'
+import NotFoundScreen from './components/NotFoundScreen.jsx';
+import RegisterScreen from './components/RegisterScreen.jsx';
 import CollectionPage, { loader as collectionPageLoader } from "./components/CollectionPage.jsx";
 import SearchPage, { loader as searchPageLoader } from "./components/SearchPage.jsx";
 import Cart from "./components/Cart.jsx";

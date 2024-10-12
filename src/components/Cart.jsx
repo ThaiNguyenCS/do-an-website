@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from "react";
 import { FaStar, FaTrash, FaCreditCard, FaTruck, FaShoppingCart } from "react-icons/fa";
 import { MdLocalShipping } from "react-icons/md";
-import "../index.css"
+import "../index.css";
 import axios from "axios";
 const Cart = () => {
     const [cart, setCart] = useState([]);
@@ -30,7 +30,9 @@ const Cart = () => {
 
     const fetchCart = async () => {
         try {
-            const response = await axios.get("https://domstore.azurewebsites.net/api/v1/carts");
+            const response = await axios.get("https://domstore.azurewebsites.net/api/v1/carts", {
+                withCredentials: true,
+            });
             setCart(response.data);
         } catch (error) {
             console.error("Lỗi khi tải giỏ hàng:", error);
@@ -39,10 +41,16 @@ const Cart = () => {
 
     const updateQuantity = async (id, newQuantity) => {
         try {
-            await axios.put(`https://domstore.azurewebsites.net/api/v1/carts`, {
-                id,
-                quantity: newQuantity,
-            });
+            await axios.put(
+                `https://domstore.azurewebsites.net/api/v1/carts`,
+                {
+                    id,
+                    quantity: newQuantity,
+                },
+                {
+                    withCredentials: true,
+                }
+            );
             fetchCart();
         } catch (error) {
             console.error("Lỗi khi cập nhật số lượng:", error);
