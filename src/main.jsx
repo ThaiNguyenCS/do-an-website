@@ -4,8 +4,9 @@ import { createBrowserRouter, RouterProvider } from "react-router-dom";
 import App from "./App.jsx";
 import "./index.css";
 import MainPage from "./components/MainPage.jsx";
-import CollectionPage, { loader as collectionPageLoader} from "./components/CollectionPage.jsx";
-import SearchPage, { loader as searchPageLoader} from "./components/SearchPage.jsx";
+import CollectionPage, { loader as collectionPageLoader } from "./components/CollectionPage.jsx";
+import SearchPage, { loader as searchPageLoader } from "./components/SearchPage.jsx";
+import Cart from "./components/Cart.jsx";
 
 const router = createBrowserRouter([
     {
@@ -19,9 +20,8 @@ const router = createBrowserRouter([
             },
             {
                 path: "collections/:collectionName",
-                element: <CollectionPage/>,
-                loader: collectionPageLoader
-
+                element: <CollectionPage />,
+                loader: collectionPageLoader,
             },
             // payment screen
             {
@@ -30,6 +30,7 @@ const router = createBrowserRouter([
             // view cart
             {
                 path: "cart",
+                element: <Cart />,
             },
             // view product detail
             {
@@ -43,9 +44,9 @@ const router = createBrowserRouter([
             },
             {
                 path: "search",
-                element: <SearchPage/>,
-                loader: searchPageLoader
-            }
+                element: <SearchPage />,
+                loader: searchPageLoader,
+            },
         ],
     },
 ]);

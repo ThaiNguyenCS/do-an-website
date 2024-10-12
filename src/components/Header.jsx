@@ -5,10 +5,12 @@ import dummyLogo from "../assets/dummy_logo.png";
 import { FaRegUser } from "react-icons/fa";
 import { FiShoppingCart } from "react-icons/fi";
 import DropdownMenu from "./DropdownMenu";
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 // logo + name, navigation, cart
 
 const Header = () => {
+    const navigate = useNavigate();
+
     return (
         <>
             <div className={styles["container"]}>
@@ -41,7 +43,10 @@ const Header = () => {
                     <div className={styles["action-button"]} style={{ marginRight: "10px" }}>
                         <FaRegUser className={styles["action-icon"]} />
                     </div>
-                    <div className={styles["action-button"]}>
+                    <div className={styles["action-button"]} onClick={(e) => {
+                        e.stopPropagation();
+                        navigate("/cart")
+                    }}>
                         <FiShoppingCart className={styles["action-icon"]} />
                     </div>
                 </div>
