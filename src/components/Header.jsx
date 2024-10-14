@@ -11,7 +11,8 @@ import {useSelector} from "react-redux"
 
 const Header = () => {
     const navigate = useNavigate();
-    const appStatus = useSelector()
+    const appStatus = useSelector(state => state.appState);
+    console.log(appStatus);
 
     return (
         <>

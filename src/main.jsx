@@ -4,13 +4,15 @@ import { createBrowserRouter, RouterProvider } from "react-router-dom";
 import App from "./App.jsx";
 import "./index.css";
 import MainPage from "./components/MainPage.jsx";
-import LoginScreen from './components/LoginScreen.jsx'
-import NotFoundScreen from './components/NotFoundScreen.jsx';
-import RegisterScreen from './components/RegisterScreen.jsx';
+import LoginScreen from "./components/LoginScreen.jsx";
+import NotFoundScreen from "./components/NotFoundScreen.jsx";
+import RegisterScreen from "./components/RegisterScreen.jsx";
 import CollectionPage, { loader as collectionPageLoader } from "./components/CollectionPage.jsx";
 import SearchPage, { loader as searchPageLoader } from "./components/SearchPage.jsx";
 import Cart from "./components/Cart.jsx";
 import Admin from "./components/Admin.jsx";
+import { Provider } from "react-redux";
+import store from "./redux_store.js";
 
 const router = createBrowserRouter([
     {
@@ -60,7 +62,7 @@ const router = createBrowserRouter([
     },
     {
         path: "/admin",
-        element: <Admin/>,
+        element: <Admin />,
         children: [
             {
                 path: "products",
@@ -86,14 +88,14 @@ const router = createBrowserRouter([
                 path: "*",
                 element: <NotFoundScreen />, // Route 404
             },
-        ]
-        
-    }
+        ],
+    },
 ]);
-
 
 createRoot(document.getElementById("root")).render(
     <StrictMode>
-        <RouterProvider router={router}></RouterProvider>
+        <Provider store={store}>
+            <RouterProvider router={router}></RouterProvider>
+        </Provider>
     </StrictMode>
 );

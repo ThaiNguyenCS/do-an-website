@@ -8,7 +8,7 @@ const cartSlicer = createSlice(
         name: "cart",
         reducers: 
         {
-    
+            
         }
     }
 )
