@@ -6,10 +6,12 @@ import { FaRegUser } from "react-icons/fa";
 import { FiShoppingCart } from "react-icons/fi";
 import DropdownMenu from "./DropdownMenu";
 import { Link, useNavigate } from "react-router-dom";
+import {useSelector} from "react-redux"
 // logo + name, navigation, cart
 
 const Header = () => {
     const navigate = useNavigate();
+    const appStatus = useSelector()
 
     return (
         <>

@@ -6,7 +6,7 @@ const initialState = {
     username: ""
 }
 
-const cartSlicer = createSlice(
+const appSlicer = createSlice(
     {
         initialState,
         name: "app",
@@ -23,5 +23,5 @@ const cartSlicer = createSlice(
     }
 )
 
-export default cartSlicer.reducer;
-export const {login, logout} = cartSlicer.actions;
+export default appSlicer.reducer;
+export const {login, logout} = appSlicer.actions;
