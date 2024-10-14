@@ -44,7 +44,13 @@ const Header = () => {
                 </nav>
                 <div className={styles["action-container"]}>
                     {appStatus?.isLogined ? (
-                        <div className={styles["action-button"]} style={{ marginRight: "10px" }}>
+                        <div
+                            className={styles["action-button"]}
+                            style={{ marginRight: "10px" }}
+                            onClick={(e) => {   
+                                navigate("/profile");
+                            }}
+                        >
                             <FaRegUser className={styles["action-icon"]} />
                         </div>
                     ) : (
