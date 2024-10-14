@@ -81,7 +81,11 @@ const router = createBrowserRouter([
             {
                 path: "orders",
                 element: <div>orders</div>,
-            }
+            },
+            {
+                path: "*",
+                element: <NotFoundScreen />, // Route 404
+            },
         ]
         
     }
