@@ -25,11 +25,14 @@ const LoginScreen = () => {
         },
       );
 
+      console.log(response)
+
       if (response.redirected) {
-        setShowSuccessPopup(true);
+        // setShowSuccessPopup(true);
         const result = await response.json();
         if (response.ok) {
           setMessage("Đăng nhập thành công!");
+
         } else {
           setMessage(`Lỗi: ${result.message || "Đăng nhập thất bại"}`);
         }

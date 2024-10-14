@@ -10,6 +10,7 @@ import RegisterScreen from './components/RegisterScreen.jsx';
 import CollectionPage, { loader as collectionPageLoader } from "./components/CollectionPage.jsx";
 import SearchPage, { loader as searchPageLoader } from "./components/SearchPage.jsx";
 import Cart from "./components/Cart.jsx";
+import Admin from "./components/Admin.jsx";
 
 const router = createBrowserRouter([
     {
@@ -57,6 +58,33 @@ const router = createBrowserRouter([
             },
         ],
     },
+    {
+        path: "/admin",
+        element: <Admin/>,
+        children: [
+            {
+                path: "products",
+                element: <div>Products</div>,
+            },
+            {
+                path: "promotions",
+                element: <div>promotions</div>,
+            },
+            {
+                path: "vouchers",
+                element: <div>vouchers</div>,
+            },
+            {
+                path: "reports",
+                element: <div>reports</div>,
+            },
+            {
+                path: "orders",
+                element: <div>orders</div>,
+            }
+        ]
+        
+    }
 ]);
 
 
