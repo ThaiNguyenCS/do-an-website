@@ -6,12 +6,12 @@ import { FaRegUser } from "react-icons/fa";
 import { FiShoppingCart } from "react-icons/fi";
 import DropdownMenu from "./DropdownMenu";
 import { Link, useNavigate } from "react-router-dom";
-import {useSelector} from "react-redux"
+import { useSelector } from "react-redux";
 // logo + name, navigation, cart
 
 const Header = () => {
     const navigate = useNavigate();
-    const appStatus = useSelector(state => state.appState);
+    const appStatus = useSelector((state) => state.appState);
     console.log(appStatus);
 
     return (
@@ -43,13 +43,25 @@ const Header = () => {
                     </div>
                 </nav>
                 <div className={styles["action-container"]}>
-                    <div className={styles["action-button"]} style={{ marginRight: "10px" }}>
-                        <FaRegUser className={styles["action-icon"]} />
-                    </div>
-                    <div className={styles["action-button"]} onClick={(e) => {
-                        e.stopPropagation();
-                        navigate("/cart")
-                    }}>
+                    {appStatus?.isLogined ? (
+                        <div className={styles["action-button"]} style={{ marginRight: "10px" }}>
+                            <FaRegUser className={styles["action-icon"]} />
+                        </div>
+                    ) : (
+                        <>
+                            <div style={{ marginRight: "10px" }}>
+                                <Link to={"/login"}>Đăng nhập</Link>
+                            </div>
+                        </>
+                    )}
+
+                    <div
+                        className={styles["action-button"]}
+                        onClick={(e) => {
+                            e.stopPropagation();
+                            navigate("/cart");
+                        }}
+                    >
                         <FiShoppingCart className={styles["action-icon"]} />
                     </div>
                 </div>
