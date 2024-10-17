@@ -13,6 +13,9 @@ import Cart from "./components/Cart.jsx";
 import Admin from "./components/Admin.jsx";
 import { Provider } from "react-redux";
 import store from "./redux_store.js";
+import ManageProduct from "./components/ManageProduct.jsx";
+import AdminProductDetail from "./components/AdminProductDetail.jsx";
+import AddProduct from "./components/AddProduct.jsx";
 
 const router = createBrowserRouter([
     {
@@ -65,9 +68,18 @@ const router = createBrowserRouter([
         element: <Admin />,
         children: [
             {
-                path: "products",
-                element: <div>Products</div>,
+                path: "products/add-product",
+                element: <AddProduct />,
             },
+            {
+                path: "products/:id",
+                element: <AdminProductDetail />,
+            },
+            {
+                path: "products",
+                element: <ManageProduct />,
+            },
+
             {
                 path: "promotions",
                 element: <div>promotions</div>,

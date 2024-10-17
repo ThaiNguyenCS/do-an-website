@@ -4,7 +4,6 @@ const apiURL = import.meta.env.VITE_API_URL;
 import axios from "axios";
 import { Await, defer, useLoaderData, useLocation, useNavigate, useSubmit } from "react-router-dom";
 import Filter from "./Filter";
-import { dummyProducts } from "../data/products";
 import ProductPreviewItem from "./ProductPreviewItem";
 import MainPageNav from "./MainPageNav";
 import { findParentNumByLink, urlMap } from "../utils/urlMapping";
@@ -54,17 +53,21 @@ const CollectionPage = () => {
     const [filterCondition, setFilterCondition] = useState({}); // filter options of the left section
 
     const [orderFilterCondition, setOrderFilterCondition] = useState(0);
-    const [pageOption, setPageOption] = useState({ page: 1, maxPage: 1 });
+    const [currentPage, setCurrentPage] = useState(1);
+    const [maxPage, setMaxPage] = useState(1);
     // filter options of the right section
 
     const priceRange = { min: 0, max: 9999999 };
 
     useEffect(() => {
+        if (isFirstRender.current) {
+            isFirstRender.current = false;
+            return;
+        }
         requestData();
-    }, [filterCondition, orderFilterCondition]);
+    }, [filterCondition, orderFilterCondition, currentPage]);
 
     useEffect(() => {
-
         if (activeNav.link !== location.pathname) {
             setActiveNav({ link: location.pathname, parentNum: findParentNumByLink(location.pathname) }); // set to the newest URL
             isNavigate.current = false;
@@ -87,7 +90,7 @@ const CollectionPage = () => {
                 queryString.append("sortBy", filterOption.sortBy);
                 queryString.append("sortOrder", filterOption.sortOrder);
             }
-            queryString.append("page", pageOption.page);
+            queryString.append("page", currentPage);
             console.log("navigate to ", `${location.pathname}?${queryString.toString()}`);
             navigate(`${location.pathname}?${queryString.toString()}`);
         } else {
@@ -95,10 +98,10 @@ const CollectionPage = () => {
         }
     }
 
-    useEffect(() => {
-        console.log(`page ${pageOption.page} maxPage ${pageOption.maxPage}`);
-        requestData();
-    }, [pageOption]);
+    // useEffect(() => {
+    //     console.log(`page ${currentPage} maxPage ${maxPage}`);
+    //     requestData("from currentPage");
+    // }, [currentPage]);
 
     return (
         <>
@@ -121,13 +124,7 @@ const CollectionPage = () => {
                 <Suspense fallback={<div>Loading...</div>}>
                     <Await resolve={data}>
                         {(data) => {
-                            if (isFirstRender.current) { // ensure this only run once when first render
-                                isFirstRender.current = false
-                                setPageOption({
-                                    page: data.data.currentPage,
-                                    maxPage: data.data.totalPages,
-                                });
-                            }
+                            setMaxPage(data.data.totalPages);
 
                             return (
                                 <>
@@ -138,7 +135,11 @@ const CollectionPage = () => {
                                               ))
                                             : "Error"}
                                     </div>
-                                    <PageNavigation pageOption={pageOption} setPageOption={setPageOption} />
+                                    <PageNavigation
+                                        currentPage={currentPage}
+                                        setCurrentPage={setCurrentPage}
+                                        maxPage={maxPage}
+                                    />
                                 </>
                             );
                         }}

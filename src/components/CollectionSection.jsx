@@ -1,7 +1,6 @@
 import React, { useEffect, useRef, useState } from "react";
 import styles from "./CollectionSection.module.css";
 import ProductPreviewItem from "./ProductPreviewItem";
-import { dummyProducts } from "../data/products";
 import { IoIosArrowForward } from "react-icons/io";
 import { IoIosArrowBack } from "react-icons/io";
 
@@ -44,9 +43,7 @@ const CollectionSection = (props) => {
                 {/* Or a banner representing the title */}
                 <div className={styles["slider-wrapper"]}>
                     <div className={styles["product-slider-container"]} ref={sliderRef}>
-                        {dummyProducts.map((item) => (
-                            <ProductPreviewItem product={item} isFixedSize={true} />
-                        ))}
+                        <ProductPreviewItem />
                     </div>
                     {leftButton && (
                         <div
