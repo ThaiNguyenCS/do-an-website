@@ -1,4 +1,4 @@
-import { formatPrice } from "./priceFormatter";
+import { formatPrice } from "./formatter";
 
 const orderFilterOptions = [
     { description: "Mặc định", optionNum: 0, sortBy: "", sortOrder: "" },

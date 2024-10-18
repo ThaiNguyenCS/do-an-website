@@ -1,6 +1,6 @@
 import React, { useContext, useEffect, useRef, useState } from "react";
 import styles from "./PriceSlider.module.css";
-import { formatPrice } from "../utils/priceFormatter";
+import { formatPrice } from "../utils/formatter";
 import { useCollectionPageContext } from "./CollectionPage";
 import { useFilterContext } from "./Filter";
 

@@ -43,7 +43,6 @@ const CollectionSection = (props) => {
                 {/* Or a banner representing the title */}
                 <div className={styles["slider-wrapper"]}>
                     <div className={styles["product-slider-container"]} ref={sliderRef}>
-                        <ProductPreviewItem />
                     </div>
                     {leftButton && (
                         <div

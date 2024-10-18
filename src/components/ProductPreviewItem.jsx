@@ -1,6 +1,6 @@
 import React from "react";
 import styles from "./ProductPreviewItem.module.css";
-import { formatPrice } from "../utils/priceFormatter";
+import { formatPrice } from "../utils/formatter";
 import { FaStar } from "react-icons/fa";
 
 const ProductPreviewItem = (props) => {

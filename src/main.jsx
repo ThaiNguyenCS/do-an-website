@@ -16,6 +16,7 @@ import store from "./redux_store.js";
 import ManageProduct from "./components/ManageProduct.jsx";
 import AdminProductDetail from "./components/AdminProductDetail.jsx";
 import AddProduct from "./components/AddProduct.jsx";
+import ManagePromotion from "./components/ManagePromotion.jsx";
 
 const router = createBrowserRouter([
     {
@@ -82,7 +83,7 @@ const router = createBrowserRouter([
 
             {
                 path: "promotions",
-                element: <div>promotions</div>,
+                element: <ManagePromotion />,
             },
             {
                 path: "vouchers",

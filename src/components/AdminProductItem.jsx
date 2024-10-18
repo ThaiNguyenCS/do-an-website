@@ -1,7 +1,7 @@
 import React, { useState } from "react";
 import styles from "./AdminProductItem.module.css";
 import { useNavigate } from "react-router-dom";
-import { formatPrice } from "../utils/priceFormatter";
+import { formatPrice } from "../utils/formatter";
 import { FaTrash } from "react-icons/fa";
 import { generateUUID } from "../utils/id";
 

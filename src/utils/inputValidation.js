@@ -25,3 +25,10 @@ export function checkSizeArr(sizeArr) {
     }
     return { result: true };
 }
+
+export function checkEmptyString(str) {
+    if (!str || !str.trim()) {
+        return { result: false, msg: "Vui lòng điền đầy đủ các trường" };
+    }
+    return { result: true };
+}
