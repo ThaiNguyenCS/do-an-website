@@ -1,1 +1,3 @@
-# do_an_fe
+#### How to run ?
+npm install
+npm run dev

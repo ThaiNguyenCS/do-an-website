@@ -5,6 +5,7 @@ import ProductPreviewItem from "./ProductPreviewItem";
 import Filter from "./Filter";
 import SearchBar from "./SearchBar";
 import CollectionSection from "./CollectionSection";
+import SlideBanner from "./SlideBanner";
 // some banners
 // some preview collections (hot trend, ...)
 
@@ -12,9 +13,9 @@ const MainPage = () => {
     return (
         <>
             <div className={styles["container"]}>
+                <SlideBanner />
                 <SearchBar />
                 <CollectionSection />
-               
             </div>
         </>
     );

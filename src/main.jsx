@@ -17,7 +17,8 @@ import ManageProduct from "./components/ManageProduct.jsx";
 import AdminProductDetail from "./components/AdminProductDetail.jsx";
 import AddProduct from "./components/AddProduct.jsx";
 import ManagePromotion from "./components/ManagePromotion.jsx";
-import Profile from "./components/ProfileScreen.jsx"
+import Profile from "./components/ProfileScreen.jsx";
+import ProductDetail from "./components/ProductDetail.jsx";
 
 const router = createBrowserRouter([
     {
@@ -44,7 +45,8 @@ const router = createBrowserRouter([
             },
             // view product detail
             {
-                path: "product/:product",
+                path: "product/:productId",
+                element: <ProductDetail />,
             },
             {
                 path: "login",

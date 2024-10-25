@@ -3,6 +3,7 @@ import { FaStar, FaTrash, FaCreditCard, FaTruck, FaShoppingCart } from "react-ic
 import { MdLocalShipping } from "react-icons/md";
 import "../index.css";
 import axios from "axios";
+import { authConfig } from "../utils/axiosConfig";
 const Cart = () => {
     const [cart, setCart] = useState([]);
     const [creditCard, setCreditCard] = useState({
@@ -30,10 +31,10 @@ const Cart = () => {
 
     const fetchCart = async () => {
         try {
-            const response = await axios.get("https://domstore.azurewebsites.net/api/v1/carts", {
-                withCredentials: true,
-            });
-            setCart(response.data);
+            const response = await axios.get("https://domstore.azurewebsites.net/api/v1/carts", authConfig);
+            console.log(response.data);
+
+            setCart(response.data.data);
         } catch (error) {
             console.error("Lỗi khi tải giỏ hàng:", error);
         }
@@ -47,9 +48,7 @@ const Cart = () => {
                     id,
                     quantity: newQuantity,
                 },
-                {
-                    withCredentials: true,
-                }
+                authConfig
             );
             fetchCart();
         } catch (error) {
@@ -68,17 +67,17 @@ const Cart = () => {
 
     const addItem = async (item) => {
         try {
-            await axios.post("https://domstore.azurewebsites.net/api/v1/carts", item);
+            await axios.post("https://domstore.azurewebsites.net/api/v1/carts", item, authConfig);
             fetchCart();
         } catch (error) {
             console.error("Lỗi khi thêm mặt hàng:", error);
         }
     };
 
-    const subtotal = cart.reduce((acc, item) => acc + item.price * item.quantity, 0);
-    const tax = subtotal * 0.08;
-    const shipping = shippingCosts[shippingMethod];
-    const total = subtotal + tax + shipping;
+    // const subtotal = cart.reduce((acc, item) => acc + item.price * item.quantity, 0);
+    // const tax = subtotal * 0.08;
+    // const shipping = shippingCosts[shippingMethod];
+    // const total = subtotal + tax + shipping;
 
     const handleCreditCardChange = (e) => {
         setCreditCard({ ...creditCard, [e.target.name]: e.target.value });

@@ -2,14 +2,24 @@ import React from "react";
 import styles from "./ProductPreviewItem.module.css";
 import { formatPrice } from "../utils/formatter";
 import { FaStar } from "react-icons/fa";
+import { useNavigate } from "react-router-dom";
 
 const ProductPreviewItem = (props) => {
     // console.log(props.product);
-
+    const navigate = useNavigate();
+    function goToDetail() {
+        navigate(`/product/${props.product._id}`);
+    }
     return (
         <>
             <div className={`${styles["container"]} ${props.isFixedSize ? styles["fixed-size"] : ""}`}>
-                <img src={props.product.imageUrl[0] || ""} className={styles["product-img"]}></img>
+                <img
+                    src={props.product.imageUrl[0] || ""}
+                    className={styles["product-img"]}
+                    onClick={() => {
+                        goToDetail();
+                    }}
+                ></img>
                 <div className={styles["product-info"]}>
                     <div className={styles["size-color-container"]}>
                         <span>{props.product.totalColors} Màu sắc</span>

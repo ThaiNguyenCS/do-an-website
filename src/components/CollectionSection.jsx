@@ -8,6 +8,11 @@ const CollectionSection = (props) => {
     const sliderRef = useRef(null);
     const [leftButton, setLeftButton] = useState(false);
     const [rightButton, setRightButton] = useState(false);
+
+    async function fetchData () {
+        
+    }
+
     useEffect(() => {
         if (sliderRef.current) {
             const leftScroll = sliderRef.current.scrollLeft;
