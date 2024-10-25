@@ -24,7 +24,7 @@ const ChildNavItem = (props) => {
                         navigateToCollection();
                     }}
                 >
-                    <img src="" alt="" className={styles["nav-icon"]} />
+                    <img src={props.item.img || ""} alt="" className={styles["nav-icon"]} />
                 </div>
 
                 <div

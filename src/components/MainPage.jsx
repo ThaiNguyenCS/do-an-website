@@ -6,6 +6,7 @@ import Filter from "./Filter";
 import SearchBar from "./SearchBar";
 import CollectionSection from "./CollectionSection";
 import SlideBanner from "./SlideBanner";
+const apiURL = import.meta.env.VITE_API_URL;
 // some banners
 // some preview collections (hot trend, ...)
 
@@ -15,7 +16,10 @@ const MainPage = () => {
             <div className={styles["container"]}>
                 <SlideBanner />
                 <SearchBar />
-                <CollectionSection />
+                <CollectionSection theme={{ title: "Sản phẩm mới ra mắt", dataPath: `${apiURL}/products?limit=20` }} />
+                <CollectionSection
+                    theme={{ title: "Sản phẩm khuyến mãi", dataPath: `${apiURL}/products/promotional?limit=20` }}
+                />
             </div>
         </>
     );

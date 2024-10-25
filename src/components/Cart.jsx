@@ -74,10 +74,10 @@ const Cart = () => {
         }
     };
 
-    // const subtotal = cart.reduce((acc, item) => acc + item.price * item.quantity, 0);
-    // const tax = subtotal * 0.08;
-    // const shipping = shippingCosts[shippingMethod];
-    // const total = subtotal + tax + shipping;
+    const subtotal = cart.reduce((acc, item) => acc + item.price * item.quantity, 0);
+    const tax = subtotal * 0.08;
+    const shipping = shippingCosts[shippingMethod];
+    const total = subtotal + tax + shipping;
 
     const handleCreditCardChange = (e) => {
         setCreditCard({ ...creditCard, [e.target.name]: e.target.value });

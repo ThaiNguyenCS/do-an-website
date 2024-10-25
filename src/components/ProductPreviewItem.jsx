@@ -27,11 +27,21 @@ const ProductPreviewItem = (props) => {
                     </div>
                     <div className={styles["rating-section"]}>
                         <FaStar className={styles["icon"]} />
-                        <span>{props.product.totalRate || "No rating"}</span>
+                        <span>{props.product.totalRate || "Chưa có đánh giá"}</span>
                     </div>
                     <h4 className={styles["product-title"]}>{props.product.name}</h4>
-                    <div className={styles["product-price"]}>{formatPrice(props.product.price)}</div>
-                    <div>Chọn màu</div>
+                    {props.product.promotionalPrice ? (
+                        <>
+                            <div className={styles["product-old-price"]}>{formatPrice(props.product.price)}</div>
+                            <div className={styles["product-price"]}>{formatPrice(props.product.promotionalPrice)}</div>
+                        </>
+                    ) : (
+                        <>
+                            <div className={styles["product-price"]}>{formatPrice(props.product.price)}</div>
+                        </>
+                    )}
+
+                    {/* <div>Chọn màu</div> */}
                 </div>
             </div>
         </>

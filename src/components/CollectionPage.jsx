@@ -28,7 +28,7 @@ const loader = async ({ request, params }) => {
         const requestURL = new URL(request.url);
         const queryParams = new URLSearchParams(requestURL.search);
         // queryParams.append("category", collectionSearchParam);
-        queryParams.append("limit", 30); // set default limit is 30
+        queryParams.append("limit", 20); // set default limit is 20
         let searchString = queryParams.toString();
         console.log("search string", searchString);
         const data = axios.get(`${apiURL}/products/search?${searchString}`).then((response) => response.data);
@@ -73,6 +73,9 @@ const CollectionPage = () => {
             isNavigate.current = false;
             setFilterCondition({}); // reset filter
             setOrderFilterCondition(0); // reset filter
+            const queryParams = new URLSearchParams(location.search);
+            const currentNum = queryParams.get("page");
+            if (currentNum) setCurrentPage(parseInt(currentNum)); // set correct current page if page is requested by URL
         }
     }, [location]);
 
@@ -97,12 +100,6 @@ const CollectionPage = () => {
             isNavigate.current = true;
         }
     }
-
-    // useEffect(() => {
-    //     console.log(`page ${currentPage} maxPage ${maxPage}`);
-    //     requestData("from currentPage");
-    // }, [currentPage]);
-
     return (
         <>
             <section className={styles["container"]}>
