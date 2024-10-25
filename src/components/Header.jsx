@@ -1,25 +1,37 @@
-import React from "react";
 import styles from "./Header.module.css";
 import dropMenuStyles from "./DropdownMenu.module.css";
 import dummyLogo from "../assets/dummy_logo.png";
 import { FaRegUser } from "react-icons/fa";
 import { FiShoppingCart } from "react-icons/fi";
+import { IoMdLogOut } from "react-icons/io";
 import DropdownMenu from "./DropdownMenu";
 import { Link, useNavigate } from "react-router-dom";
-import { useSelector } from "react-redux";
+import { useSelector, useDispatch } from "react-redux";
+import { logout } from "../slicers/appSlicer";
+
 // logo + name, navigation, cart
 
 const Header = () => {
     const navigate = useNavigate();
+    const dispatch = useDispatch();
     const appStatus = useSelector((state) => state.appState);
     console.log(appStatus);
+
+    const handleLogout = () => {
+        dispatch(logout());
+        navigate("/login");
+    };
 
     return (
         <>
             <div className={styles["container"]}>
                 <div className={styles["logo-container"]}>
                     <Link to={"/"}>
-                        <img src={dummyLogo} alt="App Logo" className={styles["app-logo"]} />
+                        <img
+                            src={dummyLogo}
+                            alt="App Logo"
+                            className={styles["app-logo"]}
+                        />
                     </Link>
                 </div>
                 <nav className={styles["navigation-container"]}>
@@ -43,16 +55,30 @@ const Header = () => {
                     </div>
                 </nav>
                 <div className={styles["action-container"]}>
-                    {appStatus?.isLogined ? (
-                        <div className={styles["action-button"]} style={{ marginRight: "10px" }}>
-                            <FaRegUser className={styles["action-icon"]} />
-                        </div>
-                    ) : (
+                    {appStatus?.isLoggedIn ? (
                         <>
-                            <div style={{ marginRight: "10px" }}>
-                                <Link to={"/login"}>Đăng nhập</Link>
+                            <div
+                                className="flex items-center cursor-pointer mr-4"
+                                onClick={handleLogout}
+                            >
+                                <IoMdLogOut className="text-lg" />
+                            </div>
+                            <div
+                                className="flex items-center cursor-pointer mr-2.5"
+                                onClick={() => navigate("/profile")}
+                            >
+                                <FaRegUser className="text-lg" />
                             </div>
                         </>
+                    ) : (
+                        <div className="mr-2.5">
+                            <Link
+                                to="/login"
+                                className="text-black hover:underline"
+                            >
+                                Đăng nhập
+                            </Link>
+                        </div>
                     )}
 
                     <div

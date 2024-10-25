@@ -13,6 +13,7 @@ import Cart from "./components/Cart.jsx";
 import Admin from "./components/Admin.jsx";
 import { Provider } from "react-redux";
 import store from "./redux_store.js";
+import Profile from "./components/ProfileScreen.jsx"
 
 const router = createBrowserRouter([
     {
@@ -53,6 +54,10 @@ const router = createBrowserRouter([
                 path: "search",
                 element: <SearchPage />,
                 loader: searchPageLoader,
+            },
+            {
+                path: "profile",
+                element: <Profile />,
             },
             {
                 path: "*",
