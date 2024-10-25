@@ -1,6 +1,6 @@
 const authConfig = {
     headers: {
-        Authorization: `Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJfaWQiOiI2NzBiMzU3ODRiYTE3OWNjMTUxMzllMDIiLCJuYW1lIjoib3duZXIiLCJhZGRyZXNzIjoib3duZXIiLCJ1c2VybmFtZSI6Im93bmVyIiwiZW1haWwiOiJvd25lciIsInBhc3N3b3JkIjoiJDJhJDEwJDNxUnFVZ1B4RUZTdWRCNVV0clRFeXVsQkZQNTNDRzV5NVA1U21weHprZmVhclBJaUFra3VtIiwicm9sZSI6Ik9XTkVSIiwiZGVsZXRlZCI6ZmFsc2UsInNvY2lhbEFjY291bnRzIjpbXSwiY3JlYXRlZEF0IjoiMjAyNC0xMC0xM1QwMjo1MDozMi40NDJaIiwidXBkYXRlZEF0IjoiMjAyNC0xMC0xM1QwMjo1MDozMi40NDJaIiwiX192IjowLCJpYXQiOjE3MjkyNDA1NjcsImV4cCI6MTcyOTMyNjk2N30.U03ymVp2Xnsyyjl8vPgVgHKx75OVYOzwZhvNVAv93kw`,
+        Authorization: `Bearer ${localStorage.getItem("authToken")}`,
     },
 };
 

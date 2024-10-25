@@ -17,6 +17,7 @@ import ManageProduct from "./components/ManageProduct.jsx";
 import AdminProductDetail from "./components/AdminProductDetail.jsx";
 import AddProduct from "./components/AddProduct.jsx";
 import ManagePromotion from "./components/ManagePromotion.jsx";
+import Profile from "./components/ProfileScreen.jsx"
 
 const router = createBrowserRouter([
     {
@@ -57,6 +58,10 @@ const router = createBrowserRouter([
                 path: "search",
                 element: <SearchPage />,
                 loader: searchPageLoader,
+            },
+            {
+                path: "profile",
+                element: <Profile />,
             },
             {
                 path: "*",
