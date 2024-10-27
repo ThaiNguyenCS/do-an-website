@@ -11,6 +11,12 @@
     margin-bottom: 10px;
 }
 
+.container:hover
+{
+    background-color: rgb(240, 240, 240);
+}
+
+
 .detail-button
 {
     color: blue;

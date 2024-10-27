@@ -1,0 +1,11 @@
+.container.expand
+{
+    padding-left: 20vw;
+    transition: 500ms;
+}
+
+.container
+{
+    padding-left: 100px;
+    transition: 500ms;
+}

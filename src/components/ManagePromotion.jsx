@@ -5,12 +5,14 @@ import axios from "axios";
 import { authConfig } from "../utils/axiosConfig";
 import PromotionModifyPopup from "./PromotionModifyPopup";
 import PromotionAddPopup from "./PromotionAddPopup";
+import LoadingPopup from "./LoadingPopup";
 const apiURL = import.meta.env.VITE_API_URL;
 
 const ManagePromotion = () => {
     const [promotions, setPromotions] = useState([]);
     const [modifyPopup, setModifyPopup] = useState({ display: false, promotion: null });
     const [addPopup, setAddPopup] = useState(false);
+    const [isLoading, setIsLoading] = useState(true);
 
     async function getPromotions() {
         try {
@@ -22,6 +24,8 @@ const ManagePromotion = () => {
         } catch (error) {
             console.error(error);
             alert(`Có lỗi xảy ra, vui lòng thử lại sau ${error.response.data.message}`);
+        } finally {
+            setIsLoading(false);
         }
     }
 
@@ -88,40 +92,46 @@ const ManagePromotion = () => {
 
     return (
         <>
-            <div className={styles["container"]}>
-                <h2>Quản lý khuyến mãi</h2>
-                <button
-                    className={styles["add-button"]}
-                    onClick={(e) => {
-                        e.stopPropagation();
-                        setAddPopup(true);
-                    }}
-                >
-                    Tạo khuyến mãi
-                </button>
-                <div className={styles["promotion-container"]}>
-                    {promotions.length > 0 &&
-                        promotions.map((item) => (
-                            <Promotion
-                                key={item._id}
-                                item={item}
-                                deletePromotion={deletePromotion}
-                                displayPopup={setModifyPopup}
-                            ></Promotion>
-                        ))}
-                </div>
-            </div>
-            {modifyPopup.display ? (
-                <PromotionModifyPopup
-                    displayPopup={setModifyPopup}
-                    promotion={modifyPopup.promotion}
-                    modifyPromotion={modifyPromotion}
-                />
+            {isLoading ? (
+                <LoadingPopup />
             ) : (
-                ""
-            )}
+                <>
+                    <div className={styles["container"]}>
+                        <h2>Quản lý khuyến mãi</h2>
+                        <button
+                            className={styles["add-button"]}
+                            onClick={(e) => {
+                                e.stopPropagation();
+                                setAddPopup(true);
+                            }}
+                        >
+                            Tạo khuyến mãi
+                        </button>
+                        <div className={styles["promotion-container"]}>
+                            {promotions.length > 0 &&
+                                promotions.map((item) => (
+                                    <Promotion
+                                        key={item._id}
+                                        item={item}
+                                        deletePromotion={deletePromotion}
+                                        displayPopup={setModifyPopup}
+                                    ></Promotion>
+                                ))}
+                        </div>
+                    </div>
+                    {modifyPopup.display ? (
+                        <PromotionModifyPopup
+                            displayPopup={setModifyPopup}
+                            promotion={modifyPopup.promotion}
+                            modifyPromotion={modifyPromotion}
+                        />
+                    ) : (
+                        ""
+                    )}
 
-            {addPopup ? <PromotionAddPopup displayPopup={setAddPopup} addPromotion={addPromotion} /> : ""}
+                    {addPopup ? <PromotionAddPopup displayPopup={setAddPopup} addPromotion={addPromotion} /> : ""}
+                </>
+            )}
         </>
     );
 };
