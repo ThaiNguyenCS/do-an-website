@@ -8,7 +8,17 @@ import IcReport from "../assets/ic_report.jsx";
 import IcProduct from "../assets/ic_product.jsx";
 import { useNavigate } from "react-router-dom";
 import { IoIosArrowBack } from "react-icons/io";
+import { BsFillDoorOpenFill } from "react-icons/bs";
+import { useDispatch, useSelector } from "react-redux";
+import { logout } from "../slicers/appSlicer.js";
 const AdminSidebarNav = (props) => {
+    const dispatch = useDispatch();
+
+    const handleLogout = () => {
+        dispatch(logout());
+        navigate("/login");
+    };
+
     const navigate = useNavigate();
     const { expand, setExpand } = props;
     function navigateToSubsection(e) {
@@ -91,6 +101,16 @@ const AdminSidebarNav = (props) => {
                 >
                     <IcSupport className={styles["nav-icon"]} />
                     {expand ? <span>Hỗ trợ khách hàng</span> : ""}
+                </div>
+                <div className={styles["divider"]}></div>
+                <div
+                    className={styles["nav-item-container"]}
+                    onClick={(e) => {
+                        handleLogout();
+                    }}
+                >
+                    <BsFillDoorOpenFill className={styles["nav-icon"]} />
+                    {expand ? <span>Đăng xuất</span> : ""}
                 </div>
             </div>
         </>
