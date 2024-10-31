@@ -19,6 +19,7 @@ import AddProduct from "./components/AddProduct.jsx";
 import ManagePromotion from "./components/ManagePromotion.jsx";
 import Profile from "./components/ProfileScreen.jsx";
 import ProductDetail from "./components/ProductDetail.jsx";
+import ReportsScreen from "./components/ReportsScreen.jsx";
 
 const router = createBrowserRouter([
     {
@@ -98,7 +99,7 @@ const router = createBrowserRouter([
             },
             {
                 path: "reports",
-                element: <div>reports</div>,
+                element: <ReportsScreen/>,
             },
             {
                 path: "orders",

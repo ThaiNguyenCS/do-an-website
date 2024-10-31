@@ -29,38 +29,58 @@ const LoginScreen = () => {
             );
     
             if (response.redirected) {
-                const tokenFromUrl = new URL(response.url).searchParams.get(
-                    "token",
-                );
+                const tokenFromUrl = new URL(response.url).searchParams.get("token");
                 if (tokenFromUrl) {
-                    dispatch(setToken({ token: tokenFromUrl, username }));
-                    toast.success("Đăng nhập thành công!", {
-                        autoClose: 3000, 
+                    const userResponse = await fetch("https://domstore.azurewebsites.net/api/v1/users/profile", {
+                        headers: {
+                            Authorization: `Bearer ${tokenFromUrl}`,
+                        },
                     });
-                    setTimeout(() => {
-                        navigate("/");
-                    }, 3000);
+                    const userData = await userResponse.json();
+                    if (userData.status === "success") {
+                        const { username, role } = userData.data.user;
+                        dispatch(setToken({ token: tokenFromUrl, username, role }));
+                        toast.success("Đăng nhập thành công!", {
+                            autoClose: 3000,
+                        });
+                        setTimeout(() => {
+                            navigate("/");
+                        }, 3000);
+                    } else {
+                        toast.error("Không thể lấy thông tin người dùng.");
+                    }
                 }
             } else {
                 const result = await response.json();
                 if (response.ok && result.token) {
-                    dispatch(setToken({ token: result.token, username }));
-                    toast.success("Đăng nhập thành công!", {
-                        autoClose: 3000, 
+                    // Lấy thông tin người dùng để lấy role
+                    const userResponse = await fetch("https://domstore.azurewebsites.net/api/v1/users/profile", {
+                        headers: {
+                            Authorization: `Bearer ${result.token}`,
+                        },
                     });
-                    setTimeout(() => {
-                        navigate("/");
-                    }, 3000);
+                    const userData = await userResponse.json();
+                    if (userData.status === "success") {
+                        const { username, role } = userData.data.user;
+                        dispatch(setToken({ token: result.token, username, role }));
+                        toast.success("Đăng nhập thành công!", {
+                            autoClose: 3000,
+                        });
+                        setTimeout(() => {
+                            navigate("/");
+                        }, 3000);
+                    } else {
+                        toast.error("Không thể lấy thông tin người dùng.");
+                    }
                 } else {
-                    toast.error(
-                        `Lỗi: ${result.message || "Đăng nhập thất bại"}`,
-                    );
+                    toast.error(`Lỗi: ${result.message || "Đăng nhập thất bại"}`);
                 }
             }
         } catch (error) {
             toast.error("Đăng nhập thất bại. Vui lòng thử lại sau.");
         }
     };
+    
     
 
     useEffect(() => {
