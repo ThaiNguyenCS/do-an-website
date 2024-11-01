@@ -214,7 +214,7 @@ const ManageVoucher = () => {
                 <div className="fixed inset-0 bg-gray-600 bg-opacity-50 overflow-y-auto h-full w-full">
                     <div className="relative top-20 mx-auto p-5 border w-96 shadow-lg rounded-md bg-white">
                         <div className="flex justify-between items-center mb-4">
-                            <h2 className="text-xl font-bold">{isEditing ? "Edit Voucher" : "Create Voucher"}</h2>
+                            <h2 className="text-xl font-bold">{isEditing ? "Sửa voucher" : "Tạo voucher"}</h2>
                             <button
                                 onClick={() => {
                                     setIsModalOpen(false);
@@ -240,7 +240,7 @@ const ManageVoucher = () => {
                                 </div>
                                 <div>
                                     <label className="block text-sm font-medium text-gray-700">
-                                        Discount Percentage
+                                        Phần trăm giảm giá
                                     </label>
                                     <input
                                         type="number"
@@ -254,7 +254,7 @@ const ManageVoucher = () => {
                                     )}
                                 </div>
                                 <div>
-                                    <label className="block text-sm font-medium text-gray-700">Expiration Date</label>
+                                    <label className="block text-sm font-medium text-gray-700">Hạn sử dụng</label>
                                     <input
                                         type="date"
                                         name="expirationDate"
@@ -267,7 +267,7 @@ const ManageVoucher = () => {
                                     )}
                                 </div>
                                 <div>
-                                    <label className="block text-sm font-medium text-gray-700">Quantity</label>
+                                    <label className="block text-sm font-medium text-gray-700">Số lượng</label>
                                     <input
                                         type="number"
                                         name="quantity"
@@ -281,7 +281,7 @@ const ManageVoucher = () => {
                                     type="submit"
                                     className="w-full bg-blue-600 text-white px-4 py-2 rounded-lg hover:bg-blue-700"
                                 >
-                                    {isEditing ? "Update" : "Create"}
+                                    {isEditing ? "Cập nhật" : "Tạo"}
                                 </button>
                             </div>
                         </form>
@@ -297,22 +297,22 @@ const ManageVoucher = () => {
                             <div className="mx-auto flex items-center justify-center h-12 w-12 rounded-full bg-red-100">
                                 <FiAlertCircle className="h-6 w-6 text-red-600" />
                             </div>
-                            <h3 className="text-lg leading-6 font-medium text-gray-900 mt-4">Delete Voucher</h3>
+                            <h3 className="text-lg leading-6 font-medium text-gray-900 mt-4">Xóa voucher</h3>
                             <div className="mt-2 px-7 py-3">
-                                <p className="text-sm text-gray-500">Are you sure you want to delete this voucher?</p>
+                                <p className="text-sm text-gray-500">Bạn có chắc muốn xóa voucher này không?</p>
                             </div>
                             <div className="flex justify-center mt-4 space-x-4">
                                 <button
                                     onClick={() => handleDelete(selectedVoucher._id)}
                                     className="bg-red-600 text-white px-4 py-2 rounded-lg hover:bg-red-700"
                                 >
-                                    Delete
+                                    Xóa
                                 </button>
                                 <button
                                     onClick={() => setIsDeleteModalOpen(false)}
                                     className="bg-gray-200 text-gray-800 px-4 py-2 rounded-lg hover:bg-gray-300"
                                 >
-                                    Cancel
+                                    Hủy bỏ
                                 </button>
                             </div>
                         </div>

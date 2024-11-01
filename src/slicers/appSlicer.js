@@ -1,7 +1,7 @@
 import { createSlice } from "@reduxjs/toolkit";
 
 const initialState = {
-    role: localStorage.getItem("username"),
+    role: localStorage.getItem("role"),
     isLoggedIn: !!localStorage.getItem("authToken"),
     username: localStorage.getItem("username"),
     token: localStorage.getItem("authToken"),
@@ -12,6 +12,8 @@ const appSlicer = createSlice({
     name: "app",
     reducers: {
         setToken: (state, action) => {
+            console.log(action.payload);
+            
             state.isLoggedIn = true;
             state.token = action.payload.token;
             state.username = action.payload.username;

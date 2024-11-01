@@ -20,6 +20,8 @@ import ManagePromotion from "./components/ManagePromotion.jsx";
 import Profile from "./components/ProfileScreen.jsx";
 import ProductDetail from "./components/ProductDetail.jsx";
 import AdminOrderManagement from "./components/AdminOrderManagement.jsx";
+import ReportsScreen from "./components/ReportsScreen.jsx";
+import ManageVoucher from "./components/ManageVoucher.jsx";
 
 const router = createBrowserRouter([
     {
@@ -95,11 +97,11 @@ const router = createBrowserRouter([
             },
             {
                 path: "vouchers",
-                element: <div>vouchers</div>,
+                element: <ManageVoucher />,
             },
             {
                 path: "reports",
-                element: <div>reports</div>,
+                element: <ReportsScreen />,
             },
             {
                 path: "orders",

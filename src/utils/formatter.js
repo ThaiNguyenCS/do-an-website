@@ -1,3 +1,4 @@
+import { format } from "date-fns";
 function formatPrice(value, locale = "vi-VN") {
     if (value) {
         return new Intl.NumberFormat(locale, {
@@ -19,6 +20,14 @@ function formatDate(date) {
     return "";
 }
 
+function formatDateTime(date) {
+    if (date) {
+        const dateObj = new Date(date);
+        return format(dateObj, "dd/MM/yyyy hh:mm:ss");
+    }
+    return "";
+}
+
 function formatDateForInput(date) {
     if (date) {
         const dateObj = new Date(date);
@@ -29,4 +38,4 @@ function formatDateForInput(date) {
     return "";
 }
 
-export { formatPrice, formatDate, formatDateForInput };
+export { formatPrice, formatDate, formatDateForInput, formatDateTime };

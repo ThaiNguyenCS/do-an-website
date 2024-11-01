@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from "react";
 import { FiTruck, FiPackage, FiCheck, FiX, FiEdit2, FiTrash2, FiClock, FiSearch } from "react-icons/fi";
 import axios from "axios";
+import { authConfig } from "../utils/axiosConfig";
 
 const AdminOrderManagement = () => {
     const [orders, setOrders] = useState([]);
@@ -21,16 +22,17 @@ const AdminOrderManagement = () => {
 
     useEffect(() => {
         const filtered = orders.filter((order) =>
-            order.id.toString().toLowerCase().includes(searchQuery.toLowerCase())
+            order._id.toString().toLowerCase().includes(searchQuery.toLowerCase())
         );
         setFilteredOrders(filtered);
     }, [searchQuery, orders]);
 
     const fetchOrders = async () => {
         try {
-            const response = await axios.get("https://domstore.azurewebsites.net/api/v1/admin/orders");
-            setOrders(response.data);
-            setFilteredOrders(response.data);
+            const response = await axios.get("https://domstore.azurewebsites.net/api/v1/admin/orders", authConfig);
+            const data = response.data
+            setOrders(data.data.orders);
+            setFilteredOrders(data.data.orders);
         } catch (error) {
             console.error("Lỗi tải đơn hàng:", error);
         }
@@ -38,13 +40,17 @@ const AdminOrderManagement = () => {
 
     const fetchOrderById = async (id) => {
         try {
-            const response = await axios.get(`https://domstore.azurewebsites.net/api/v1/admin/orders/${id}`);
-            setSelectedOrder(response.data);
+            const response = await axios.get(
+                `https://domstore.azurewebsites.net/api/v1/admin/orders/${id}`,
+                authConfig
+            );
+            const data = response.data
+            setSelectedOrder(data.data.order);
             setEditFormData({
-                status: response.data.status,
-                shippingAddress: response.data.shippingAddress,
-                shippingCarrier: response.data.shippingCarrier,
-                trackingNumber: response.data.trackingNumber,
+                status: data.data.order.status,
+                shippingAddress: data.data.order.address,
+                // shippingCarrier: data.data.order.shippingCarrier,
+                // trackingNumber: data.data.order.trackingNumber,
             });
         } catch (error) {
             console.error("Lỗi tải chi tiết đơn hàng:", error);
@@ -53,7 +59,7 @@ const AdminOrderManagement = () => {
 
     const updateOrder = async (orderId) => {
         try {
-            await axios.put(`https://domstore.azurewebsites.net/api/v1/admin/orders/${orderId}`, editFormData);
+            await axios.put(`https://domstore.azurewebsites.net/api/v1/admin/orders/${orderId}`, editFormData, authConfig);
             fetchOrderById(orderId);
             setIsEditing(false);
             fetchOrders();
@@ -86,7 +92,7 @@ const AdminOrderManagement = () => {
     };
 
     return (
-        <div className="container mx-auto p-12">
+        <div className="container mx-auto">
             <h1 className="text-3xl font-bold mb-6">Quản Lý Đơn Hàng</h1>
             <div className="flex flex-col md:flex-row gap-6">
                 <div className="w-full md:w-1/3">
@@ -106,15 +112,15 @@ const AdminOrderManagement = () => {
                     <div className="bg-white shadow-md rounded-lg overflow-hidden">
                         {filteredOrders.map((order) => (
                             <div
-                                key={order.id}
+                                key={order._id}
                                 className="p-4 border-b border-gray-200 hover:bg-gray-50 cursor-pointer transition duration-150 ease-in-out"
-                                onClick={() => fetchOrderById(order.id)}
+                                onClick={() => fetchOrderById(order._id)}
                             >
                                 <div className="flex items-center justify-between">
                                     <div>
-                                        <p className="font-semibold">Đơn hàng #{order.id}</p>
+                                        <p className="font-semibold">Đơn hàng #{order._id}</p>
                                         <p className="text-sm text-gray-600">
-                                            {new Date(order.orderDate).toLocaleDateString()}
+                                            {new Date(order.createdAt).toLocaleDateString()}
                                         </p>
                                     </div>
                                     <div className="flex items-center">
@@ -144,7 +150,7 @@ const AdminOrderManagement = () => {
                     {selectedOrder ? (
                         <div className="bg-white shadow-md rounded-lg p-6">
                             <div className="flex justify-between items-center mb-4">
-                                <h3 className="text-lg font-semibold">Đơn hàng #{selectedOrder.id}</h3>
+                                <h3 className="text-lg font-semibold">Đơn hàng #{selectedOrder._id}</h3>
                                 <div className="flex space-x-2">
                                     <button
                                         onClick={() => setIsEditing(!isEditing)}
@@ -205,7 +211,7 @@ const AdminOrderManagement = () => {
                                         />
                                     </div>
                                     <button
-                                        onClick={() => updateOrder(selectedOrder.id)}
+                                        onClick={() => updateOrder(selectedOrder._id)}
                                         className="bg-green-500 text-white px-4 py-2 rounded hover:bg-green-600 transition duration-150 ease-in-out"
                                     >
                                         Cập nhật đơn hàng
@@ -228,7 +234,7 @@ const AdminOrderManagement = () => {
                                                 ? "Đã hủy"
                                                 : selectedOrder.status}
                                         </p>
-                                        <p>Tổng tiền: {selectedOrder.total.toLocaleString()}đ</p>
+                                        <p>Tổng tiền: {selectedOrder.totalPrice.toLocaleString()}đ</p>
                                     </div>
                                     <div>
                                         <h4 className="font-semibold mb-2">Thông tin vận chuyển</h4>
@@ -251,13 +257,13 @@ const AdminOrderManagement = () => {
                                             </tr>
                                         </thead>
                                         <tbody>
-                                            {selectedOrder.items.map((item, index) => (
+                                            {selectedOrder && selectedOrder.products.map((item, index) => (
                                                 <tr key={index} className="border-b">
-                                                    <td className="p-2">{item.productName}</td>
+                                                    <td className="p-2">{item.productId.productName}</td>
                                                     <td className="p-2">{item.quantity}</td>
-                                                    <td className="p-2">{item.price.toLocaleString()}đ</td>
+                                                    <td className="p-2">{item.productId.price.toLocaleString()}đ</td>
                                                     <td className="p-2">
-                                                        {(item.quantity * item.price).toLocaleString()}đ
+                                                        {(item.quantity * item.productId.price).toLocaleString()}đ
                                                     </td>
                                                 </tr>
                                             ))}

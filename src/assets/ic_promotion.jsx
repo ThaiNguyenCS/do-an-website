@@ -10,9 +10,9 @@ const IcPromotion = ({ className }) => {
                 viewBox="0 0 100 100"
                 id="Layer_1"
                 version="1.1"
-                xml:space="preserve"
+                xmlSpace="preserve"
                 xmlns="http://www.w3.org/2000/svg"
-                xmlns:xlink="http://www.w3.org/1999/xlink"
+                xmlnsXlink="http://www.w3.org/1999/xlink"
             >
                 <g>
                     <path d="M64.1,38.1l-30.2,24c-0.6,0.5-0.8,1.5-0.2,2.1c0.3,0.4,0.7,0.6,1.2,0.6c0.3,0,0.7-0.1,0.9-0.3l30.2-24   c0.6-0.5,0.8-1.5,0.2-2.1C65.7,37.7,64.8,37.6,64.1,38.1z" />
