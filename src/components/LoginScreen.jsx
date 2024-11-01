@@ -15,53 +15,76 @@ const LoginScreen = () => {
     const dispatch = useDispatch();
     const navigate = useNavigate();
 
+    function redirectAfterLogin(role) {
+        if (role === "ADMIN" || role === "OWNER") {
+            setTimeout(() => {
+                navigate("/admin");
+            }, 3000);
+        } else {
+            setTimeout(() => {
+                navigate("/");
+            }, 3000);
+        }
+    }
+
     const login = async () => {
         try {
-            const response = await fetch(
-                "https://domstore.azurewebsites.net/api/v1/login",
-                {
-                    method: "POST",
-                    headers: {
-                        "Content-Type": "application/json",
-                    },
-                    body: JSON.stringify({ username, password }),
+            const response = await fetch("https://domstore.azurewebsites.net/api/v1/login", {
+                method: "POST",
+                headers: {
+                    "Content-Type": "application/json",
                 },
-            );
-    
+                body: JSON.stringify({ username, password }),
+            });
+
             if (response.redirected) {
-                const tokenFromUrl = new URL(response.url).searchParams.get(
-                    "token",
-                );
+                const tokenFromUrl = new URL(response.url).searchParams.get("token");
                 if (tokenFromUrl) {
-                    dispatch(setToken({ token: tokenFromUrl, username }));
-                    toast.success("Đăng nhập thành công!", {
-                        autoClose: 3000, 
+                    const userResponse = await fetch("https://domstore.azurewebsites.net/api/v1/users/profile", {
+                        headers: {
+                            Authorization: `Bearer ${tokenFromUrl}`,
+                        },
                     });
-                    setTimeout(() => {
-                        navigate("/");
-                    }, 3000);
+                    const userData = await userResponse.json();
+                    if (userData.status === "success") {
+                        const { username, role } = userData.data.user;
+                        dispatch(setToken({ token: tokenFromUrl, username, role }));
+                        toast.success("Đăng nhập thành công!", {
+                            autoClose: 3000,
+                        });
+                        redirectAfterLogin(role);
+                    } else {
+                        toast.error("Không thể lấy thông tin người dùng.");
+                    }
                 }
             } else {
                 const result = await response.json();
                 if (response.ok && result.token) {
-                    dispatch(setToken({ token: result.token, username }));
-                    toast.success("Đăng nhập thành công!", {
-                        autoClose: 3000, 
+                    // Lấy thông tin người dùng để lấy role
+                    const userResponse = await fetch("https://domstore.azurewebsites.net/api/v1/users/profile", {
+                        headers: {
+                            Authorization: `Bearer ${result.token}`,
+                        },
                     });
-                    setTimeout(() => {
-                        navigate("/");
-                    }, 3000);
+                    const userData = await userResponse.json();
+                    if (userData.status === "success") {
+                        const { username, role } = userData.data.user;
+                        dispatch(setToken({ token: result.token, username, role }));
+                        toast.success("Đăng nhập thành công!", {
+                            autoClose: 3000,
+                        });
+                        redirectAfterLogin(role);
+                    } else {
+                        toast.error("Không thể lấy thông tin người dùng.");
+                    }
                 } else {
-                    toast.error(
-                        `Lỗi: ${result.message || "Đăng nhập thất bại"}`,
-                    );
+                    toast.error(`Lỗi: ${result.message || "Đăng nhập thất bại"}`);
                 }
             }
         } catch (error) {
             toast.error("Đăng nhập thất bại. Vui lòng thử lại sau.");
         }
     };
-    
 
     useEffect(() => {
         const tokenFromStorage = localStorage.getItem("authToken");
@@ -71,20 +94,18 @@ const LoginScreen = () => {
                 setToken({
                     token: tokenFromStorage,
                     username: usernameFromStorage,
-                }),
+                })
             );
             navigate("/");
         }
     }, [dispatch, navigate]);
 
     const handleFacebookLogin = () => {
-        window.location.href =
-            "https://domstore.azurewebsites.net/api/v1/auth/facebook";
+        window.location.href = "https://domstore.azurewebsites.net/api/v1/auth/facebook";
     };
 
     const handleGoogleLogin = () => {
-        window.location.href =
-            "https://domstore.azurewebsites.net/api/v1/auth/google";
+        window.location.href = "https://domstore.azurewebsites.net/api/v1/auth/google";
     };
 
     return (
@@ -94,15 +115,11 @@ const LoginScreen = () => {
                 <div className="w-full max-w-md px-4">
                     <div className="flex items-start justify-start mb-20 mt-5">
                         <img src={Sneaker} alt="Logo" className="h-10 mr-2" />
-                        <h2 className="text-xl text-[#1b2834] font-Questrial font-semibold">
-                            DomStore
-                        </h2>
+                        <h2 className="text-xl text-[#1b2834] font-Questrial font-semibold">DomStore</h2>
                     </div>
 
                     <div className="flex items-center justify-start mb-6">
-                        <h2 className="text-2xl text-[#1b2834] font-Questrial font-semibold">
-                            Đăng nhập tài khoản
-                        </h2>
+                        <h2 className="text-2xl text-[#1b2834] font-Questrial font-semibold">Đăng nhập tài khoản</h2>
                     </div>
 
                     <form>
@@ -141,11 +158,7 @@ const LoginScreen = () => {
                             <div className="text-right mt-1">
                                 <button
                                     type="button"
-                                    onClick={() =>
-                                        setShowForgotPassword(
-                                            !showForgotPassword,
-                                        )
-                                    }
+                                    onClick={() => setShowForgotPassword(!showForgotPassword)}
                                     className="text-sm text-gray-500 hover:text-[#1b2834] transition duration-300 font-Questrial font-bold"
                                 >
                                     Quên mật khẩu?
@@ -201,17 +214,11 @@ const LoginScreen = () => {
 
                     <div className="text-center font-Questrial mt-4 mb-6">
                         <p className="text-sm text-gray-500">
-                            <a
-                                href="#"
-                                className="text-gray-400 hover:text-[#1b2834] transition duration-300"
-                            >
+                            <a href="#" className="text-gray-400 hover:text-[#1b2834] transition duration-300">
                                 Điều khoản & Điều kiện
                             </a>{" "}
                             |{" "}
-                            <a
-                                href="#"
-                                className="text-gray-400 hover:text-[#1b2834] transition duration-300"
-                            >
+                            <a href="#" className="text-gray-400 hover:text-[#1b2834] transition duration-300">
                                 Chính sách bảo mật
                             </a>
                         </p>
@@ -220,11 +227,7 @@ const LoginScreen = () => {
             </div>
 
             <div className="w-full md:w-1/2 h-full">
-                <img
-                    className="h-full w-full object-cover"
-                    src={MilkRetailImage}
-                    alt="Side Image"
-                />
+                <img className="h-full w-full object-cover" src={MilkRetailImage} alt="Side Image" />
             </div>
         </div>
     );
