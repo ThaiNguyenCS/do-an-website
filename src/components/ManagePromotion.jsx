@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useRef, useState } from "react";
 import styles from "./ManagePromotion.module.css";
 import Promotion from "./Promotion";
 import axios from "axios";
@@ -6,6 +6,7 @@ import { authConfig } from "../utils/axiosConfig";
 import PromotionModifyPopup from "./PromotionModifyPopup";
 import PromotionAddPopup from "./PromotionAddPopup";
 import LoadingPopup from "./LoadingPopup";
+import DeleteModal from "./DeleteModal";
 const apiURL = import.meta.env.VITE_API_URL;
 
 const ManagePromotion = () => {
@@ -13,6 +14,8 @@ const ManagePromotion = () => {
     const [modifyPopup, setModifyPopup] = useState({ display: false, promotion: null });
     const [addPopup, setAddPopup] = useState(false);
     const [isLoading, setIsLoading] = useState(true);
+    const [deletePopup, setDeletePopup] = useState(false); // deletePopup visibility
+    const deleteInfoRef = useRef(null);
 
     async function getPromotions() {
         try {
@@ -29,7 +32,8 @@ const ManagePromotion = () => {
         }
     }
 
-    async function deletePromotion(promotion, itemContainer, disappearStyle) {
+    async function deletePromotion() {
+        const { promotion, itemContainer, disappearStyle } = deleteInfoRef.current;
         if (promotion) {
             try {
                 const response = await axios.delete(`${apiURL}/promotion/${promotion._id}`, authConfig);
@@ -38,6 +42,8 @@ const ManagePromotion = () => {
                     if (itemContainer) {
                         itemContainer.classList.add(disappearStyle); // run disappear anim
                     }
+                    deleteInfoRef.current = null; // empty the delete info
+                    setDeletePopup(false); // hide the delete popup
                     setTimeout(() => {
                         getPromotions(); // refetch data
                     }, 300);
@@ -49,6 +55,16 @@ const ManagePromotion = () => {
                 alert(`Có lỗi xảy ra, vui lòng thử lại sau ${error.response.data.message}`);
             }
         }
+    }
+
+    function requestDelete(promotion, itemContainer, disappearStyle) {
+        deleteInfoRef.current = { promotion, itemContainer, disappearStyle };
+        setDeletePopup(true);
+    }
+
+    function handleCancelDelete() {
+        deleteInfoRef.current = null;
+        setDeletePopup(false);
     }
 
     async function modifyPromotion(promotion) {
@@ -113,7 +129,7 @@ const ManagePromotion = () => {
                                     <Promotion
                                         key={item._id}
                                         item={item}
-                                        deletePromotion={deletePromotion}
+                                        requestDelete={requestDelete}
                                         displayPopup={setModifyPopup}
                                     ></Promotion>
                                 ))}
@@ -130,6 +146,16 @@ const ManagePromotion = () => {
                     )}
 
                     {addPopup ? <PromotionAddPopup displayPopup={setAddPopup} addPromotion={addPromotion} /> : ""}
+                    {deletePopup ? (
+                        <DeleteModal
+                            action="Xóa khuyến mãi"
+                            message={"Bạn có chắc muốn xóa khuyến mãi này không?"}
+                            handleModalVisibility={() => handleCancelDelete()}
+                            handleDelete={deletePromotion}
+                        />
+                    ) : (
+                        ""
+                    )}
                 </>
             )}
         </>

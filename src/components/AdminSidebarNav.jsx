@@ -11,6 +11,7 @@ import { IoIosArrowBack } from "react-icons/io";
 import { BsFillDoorOpenFill } from "react-icons/bs";
 import { useDispatch, useSelector } from "react-redux";
 import { logout } from "../slicers/appSlicer.js";
+import IcHome from "../assets/ic_home.jsx";
 const AdminSidebarNav = (props) => {
     const dispatch = useDispatch();
 
@@ -103,6 +104,12 @@ const AdminSidebarNav = (props) => {
                     {expand ? <span>Hỗ trợ khách hàng</span> : ""}
                 </div>
                 <div className={styles["divider"]}></div>
+                <div className={styles["nav-item-container"]}
+                onClick={() => {
+                    navigate("/")
+                }}>
+                    <IcHome className={styles['nav-icon']}/>
+                    {expand ? <span>Quay về màn hình chính</span> : ""}</div>
                 <div
                     className={styles["nav-item-container"]}
                     onClick={(e) => {

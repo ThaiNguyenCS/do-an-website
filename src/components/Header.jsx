@@ -27,11 +27,7 @@ const Header = () => {
             <div className={styles["container"]}>
                 <div className={styles["logo-container"]}>
                     <Link to={"/"}>
-                        <img
-                            src={dummyLogo}
-                            alt="App Logo"
-                            className={styles["app-logo"]}
-                        />
+                        <img src={dummyLogo} alt="App Logo" className={styles["app-logo"]} />
                     </Link>
                 </div>
                 <nav className={styles["navigation-container"]}>
@@ -55,12 +51,21 @@ const Header = () => {
                     </div>
                 </nav>
                 <div className={styles["action-container"]}>
+                    {appStatus?.role === "ADMIN" || appStatus?.role === "OWNER" ? (
+                        <div
+                            className={styles["link"]}
+                            onClick={() => {
+                                navigate("/admin");
+                            }}
+                        >
+                            Vào trang quản lý
+                        </div>
+                    ) : (
+                        ""
+                    )}
                     {appStatus?.isLoggedIn ? (
                         <>
-                            <div
-                                className="flex items-center cursor-pointer mr-4"
-                                onClick={handleLogout}
-                            >
+                            <div className="flex items-center cursor-pointer mr-4" onClick={handleLogout}>
                                 <IoMdLogOut className="text-lg" />
                             </div>
                             <div
@@ -72,10 +77,7 @@ const Header = () => {
                         </>
                     ) : (
                         <div className="mr-2.5">
-                            <Link
-                                to="/login"
-                                className="text-black hover:underline"
-                            >
+                            <Link to="/login" className="text-black hover:underline">
                                 Đăng nhập
                             </Link>
                         </div>

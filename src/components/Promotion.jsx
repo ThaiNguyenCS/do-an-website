@@ -38,10 +38,7 @@ const Promotion = (props) => {
                         className={styles["delete-button"]}
                         onClick={(e) => {
                             e.stopPropagation();
-                            const result = window.confirm("Bạn chắc chắn muốn xóa?");
-                            if (result) {
-                                props.deletePromotion(item, containerRef.current, styles["disappear"]);
-                            }
+                            props.requestDelete(item, containerRef.current, styles["disappear"]);
                         }}
                     />
                 </div>

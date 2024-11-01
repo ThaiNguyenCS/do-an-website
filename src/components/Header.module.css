@@ -31,6 +31,26 @@
     margin: 0 10px;
 }
 
+.link
+{
+    margin-right: 10px;
+    cursor: pointer;
+}
+
+
+.link:hover
+{
+    color: blue;
+}
+
+.link:active
+{
+    color: rgb(0, 0, 164);
+}
+
+
+
+
 .dropdown-menu-wrapper {
     opacity: 0;
     position: absolute;
