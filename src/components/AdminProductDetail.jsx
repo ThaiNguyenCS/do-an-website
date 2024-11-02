@@ -5,6 +5,7 @@ import axios from "axios";
 import { authConfig } from "../utils/axiosConfig";
 import LoadingPopup from "./LoadingPopup";
 import { IoTrashOutline } from "react-icons/io5";
+import IcReturn from "../assets/ic_return.png";
 import { colors } from "../utils/colors";
 const apiURL = import.meta.env.VITE_API_URL;
 
@@ -158,6 +159,12 @@ const AdminProductDetail = () => {
                     <LoadingPopup />
                 ) : (
                     <>
+                        <div className={styles["back-button"]} onClick={() => {
+                            navigate(-1)
+                        }}>
+                            Quay về trang tất cả sản phẩm
+                            <img src={IcReturn} className={styles["back-icon"]} />
+                        </div>
                         <h1 className={styles["page-title"]}>Chi tiết sản phẩm</h1>
                         <section>
                             <label className={styles["section-label"]} htmlFor="">
@@ -245,16 +252,15 @@ const AdminProductDetail = () => {
                                                                         item.color === colorItem.color
                                                                             ? {
                                                                                   ...item,
-                                                                                  sizes: item.sizes.map(
-                                                                                      (sizeItem) =>
-                                                                                          sizeItem.size === size.size
-                                                                                              ? {
-                                                                                                    ...sizeItem,
-                                                                                                    quantity: Number(
-                                                                                                        e.target.value
-                                                                                                    ),
-                                                                                                }
-                                                                                              : sizeItem
+                                                                                  sizes: item.sizes.map((sizeItem) =>
+                                                                                      sizeItem.size === size.size
+                                                                                          ? {
+                                                                                                ...sizeItem,
+                                                                                                quantity: Number(
+                                                                                                    e.target.value
+                                                                                                ),
+                                                                                            }
+                                                                                          : sizeItem
                                                                                   ),
                                                                               }
                                                                             : item

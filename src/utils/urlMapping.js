@@ -25,6 +25,7 @@ const urlMap = {
     "giay-the-thao-tre-em": "Giày thể thao kid",
 };
 
+
 export const navs = [
     { title: "Giày chạy bộ", link: "/collections/giay-chay-bo-nam", parent: 0, img: IcRunningShoes },
     { title: "Giày cầu lông", link: "/collections/giay-cau-long-nam", parent: 0, img: IcBadmintonShoes },
@@ -46,5 +47,7 @@ function findParentNumByLink(link) {
     let nav = navs.find((nav) => nav.link === link);
     return nav?.parent;
 }
+
+
 
 export { urlMap, findParentNumByLink };

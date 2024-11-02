@@ -25,6 +25,41 @@
     flex-direction: column;
 }
 
+.back-button
+{
+    color: gray;
+    cursor: pointer;
+    align-self: self-start;
+    position: relative;
+    margin-bottom: 10px;
+}
+
+.back-button:hover 
+{
+    text-decoration: underline;
+}
+
+.back-button:hover .back-icon 
+{
+    visibility: visible;
+    top: 50%;
+}
+
+.back-icon 
+{
+    width: 2rem;
+    height: 2rem;
+    visibility: hidden;
+    padding: 5px;
+    background-color: rgb(240, 240, 240);
+    border-radius: 99px;
+    position: absolute;
+    left: -2.5rem;
+    top: 100%;
+    transform: translateY(-50%);
+    transition: top 300ms;
+}
+
 .page-title {
     font-size: 2rem;
     font-weight: bold;

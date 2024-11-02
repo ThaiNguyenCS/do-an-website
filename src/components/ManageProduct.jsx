@@ -48,13 +48,14 @@ const ManageProduct = () => {
             <div className={styles["container"]}>
                 <h2 className={styles["page-title"]}>Quản lý sản phẩm</h2>
                 {isLoading ? (
-                    <LoadingPopup/>
+                    <LoadingPopup />
                 ) : (
                     <>
-                        <div className={styles['stat']}>Tổng số sản phẩm: {totalProducts}</div>
+                        <div className={styles["stat"]}>Tổng số sản phẩm: {totalProducts}</div>
 
                         <div className={styles["product-container"]}>
-                            {products.length > 0 && products.map((product) => <AdminProductItem product={product} key={generateUUID()}/>)}
+                            {products.length > 0 &&
+                                products.map((product) => <AdminProductItem product={product} key={generateUUID()} />)}
                         </div>
                         <PageNavigation currentPage={currentPage} setCurrentPage={setCurrentPage} maxPage={maxPage} />
                     </>
