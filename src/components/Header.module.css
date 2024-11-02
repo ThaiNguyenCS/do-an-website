@@ -10,10 +10,7 @@
     justify-content: space-between;
 }
 
-.app-logo {
-    height: var(--header-height);
-    cursor: pointer;
-}
+
 
 .navigation-container {
     display: flex;
@@ -31,25 +28,18 @@
     margin: 0 10px;
 }
 
-.link
-{
+.link {
     margin-right: 10px;
     cursor: pointer;
 }
 
-
-.link:hover
-{
+.link:hover {
     color: blue;
 }
 
-.link:active
-{
+.link:active {
     color: rgb(0, 0, 164);
 }
-
-
-
 
 .dropdown-menu-wrapper {
     opacity: 0;
@@ -59,15 +49,13 @@
     background-color: white;
     pointer-events: none;
     transition: 150ms;
-}   
+}
 
-.nav-button-container:hover
-{
+.nav-button-container:hover {
     text-decoration: underline;
 }
 
-.nav-button-container:hover .dropdown-menu-wrapper
-{
+.nav-button-container:hover .dropdown-menu-wrapper {
     opacity: 1;
     pointer-events: visible;
 }

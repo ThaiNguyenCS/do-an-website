@@ -1,6 +1,6 @@
 import styles from "./Header.module.css";
 import dropMenuStyles from "./DropdownMenu.module.css";
-import dummyLogo from "../assets/dummy_logo.png";
+import Logo from "../assets/logo.jsx";
 import { FaRegUser } from "react-icons/fa";
 import { FiShoppingCart } from "react-icons/fi";
 import { IoMdLogOut } from "react-icons/io";
@@ -27,7 +27,7 @@ const Header = () => {
             <div className={styles["container"]}>
                 <div className={styles["logo-container"]}>
                     <Link to={"/"}>
-                        <img src={dummyLogo} alt="App Logo" className={styles["app-logo"]} />
+                        <Logo width={"220px"} />
                     </Link>
                 </div>
                 <nav className={styles["navigation-container"]}>

@@ -35,6 +35,17 @@
     place-items: center;
 }
 
+.search-icon-container:hover
+{
+    background-color: rgb(230, 230, 230);
+}
+
+
+.search-icon-container:active
+{
+    background-color: rgb(220, 220, 220);
+}
+
 .icon {
     width: 1.5rem;
     height: 1.5rem;
