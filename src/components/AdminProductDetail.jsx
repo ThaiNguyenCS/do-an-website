@@ -70,7 +70,6 @@ const AdminProductDetail = () => {
 
     async function deleteProduct() {
         try {
-            // console.log(`${apiURL}/products/${id}`, authConfig);
 
             const response = await axios.delete(`${apiURL}/products/${id}`, getAuthConfig());
             const data = response.data;

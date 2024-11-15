@@ -3,7 +3,7 @@ import { useParams } from "react-router-dom"; // Import useParams
 import { FaShoppingCart, FaStar, FaStarHalfAlt } from "react-icons/fa";
 import { BsChevronLeft, BsChevronRight } from "react-icons/bs";
 import axios from "axios";
-import { authConfig } from "../utils/axiosConfig";
+import {  getAuthConfig } from "../utils/axiosConfig";
 const apiURL = import.meta.env.VITE_API_URL
 const ProductDetails = () => {
     const { productId } = useParams(); // Lấy productId từ URL
@@ -65,7 +65,7 @@ const ProductDetails = () => {
                 size: selectedSize,
             };
 
-            const response = await axios.post(`${apiURL}/carts`, cartData, authConfig);
+            const response = await axios.post(`${apiURL}/carts`, cartData, getAuthConfig());
             if (response.data.status === "success") {
                 setShowPopup(true);
                 setTimeout(() => setShowPopup(false), 3000);
