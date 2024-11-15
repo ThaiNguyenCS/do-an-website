@@ -28,61 +28,34 @@ const LoginScreen = () => {
                 },
             );
     
-            if (response.redirected) {
-                const tokenFromUrl = new URL(response.url).searchParams.get("token");
-                if (tokenFromUrl) {
-                    const userResponse = await fetch("https://domstore.azurewebsites.net/api/v1/users/profile", {
-                        headers: {
-                            Authorization: `Bearer ${tokenFromUrl}`,
-                        },
+            const tokenFromUrl = new URL(response.url).searchParams.get("token");
+            if (tokenFromUrl) {
+                const userResponse = await fetch("https://domstore.azurewebsites.net/api/v1/users/profile", {
+                    headers: {
+                        Authorization: `Bearer ${tokenFromUrl}`,
+                    },
+                });
+                const userData = await userResponse.json();
+                if (userData.status === "success") {
+                    const { username, role } = userData.data.user;
+                    dispatch(setToken({ token: tokenFromUrl, username, role }));
+                    toast.success("Đăng nhập thành công!", {
+                        autoClose: 3000,
                     });
-                    const userData = await userResponse.json();
-                    if (userData.status === "success") {
-                        const { username, role } = userData.data.user;
-                        dispatch(setToken({ token: tokenFromUrl, username, role }));
-                        toast.success("Đăng nhập thành công!", {
-                            autoClose: 3000,
-                        });
-                        setTimeout(() => {
-                            navigate("/");
-                        }, 3000);
-                    } else {
-                        toast.error("Không thể lấy thông tin người dùng.");
-                    }
+                    setTimeout(() => {
+                        navigate("/");
+                    }, 3000);
+                } else {
+                    toast.error("Không thể lấy thông tin người dùng.");
                 }
             } else {
-                const result = await response.json();
-                if (response.ok && result.token) {
-                    // Lấy thông tin người dùng để lấy role
-                    const userResponse = await fetch("https://domstore.azurewebsites.net/api/v1/users/profile", {
-                        headers: {
-                            Authorization: `Bearer ${result.token}`,
-                        },
-                    });
-                    const userData = await userResponse.json();
-                    if (userData.status === "success") {
-                        const { username, role } = userData.data.user;
-                        dispatch(setToken({ token: result.token, username, role }));
-                        toast.success("Đăng nhập thành công!", {
-                            autoClose: 3000,
-                        });
-                        setTimeout(() => {
-                            navigate("/");
-                        }, 3000);
-                    } else {
-                        toast.error("Không thể lấy thông tin người dùng.");
-                    }
-                } else {
-                    toast.error(`Lỗi: ${result.message || "Đăng nhập thất bại"}`);
-                }
+                toast.error("Token không tồn tại. Đăng nhập thất bại.");
             }
         } catch (error) {
             toast.error("Đăng nhập thất bại. Vui lòng thử lại sau.");
         }
     };
     
-    
-
     useEffect(() => {
         const tokenFromStorage = localStorage.getItem("authToken");
         const usernameFromStorage = localStorage.getItem("username");
@@ -96,17 +69,18 @@ const LoginScreen = () => {
             navigate("/");
         }
     }, [dispatch, navigate]);
+    const handleGoogleLogin = async () => {
+        window.location.href =
+            "https://domstore.azurewebsites.net/api/v1/auth/google";
+    };
 
     const handleFacebookLogin = () => {
         window.location.href =
             "https://domstore.azurewebsites.net/api/v1/auth/facebook";
     };
 
-    const handleGoogleLogin = () => {
-        window.location.href =
-            "https://domstore.azurewebsites.net/api/v1/auth/google";
-    };
-
+    
+    
     return (
         <div className="flex flex-col md:flex-row h-screen">
             <ToastContainer />
@@ -126,22 +100,23 @@ const LoginScreen = () => {
                     </div>
 
                     <form>
-                        <div className="mb-4">
-                            <label
-                                className="block text-[#1b2834] text-sm font-bold mb-2 text-left font-Questrial"
-                                htmlFor="email"
-                            >
-                                Địa chỉ Email
-                            </label>
-                            <input
-                                className="shadow appearance-none border rounded w-full py-2 px-3 bg-white text-[#1b2834] leading-tight focus:outline-none focus:shadow-outline font-Questrial focus:border-gray-500"
-                                id="email"
-                                type="email"
-                                placeholder="Email Address"
-                                value={username}
-                                onChange={(e) => setUsername(e.target.value)}
-                            />
-                        </div>
+                    <div className="mb-4">
+    <label
+        className="block text-[#1b2834] text-sm font-bold mb-2 text-left font-Questrial"
+        htmlFor="username"
+    >
+        Tên đăng nhập
+    </label>
+    <input
+        className="shadow appearance-none border rounded w-full py-2 px-3 bg-white text-[#1b2834] leading-tight focus:outline-none focus:shadow-outline font-Questrial focus:border-gray-500"
+        id="username"
+        type="text"
+        placeholder="Tên đăng nhập"
+        value={username}
+        onChange={(e) => setUsername(e.target.value)}
+    />
+</div>
+
 
                         <div className="mb-4">
                             <label

@@ -20,6 +20,7 @@ import ManagePromotion from "./components/ManagePromotion.jsx";
 import Profile from "./components/ProfileScreen.jsx";
 import ProductDetail from "./components/ProductDetail.jsx";
 import ReportsScreen from "./components/ReportsScreen.jsx";
+import AuthRedirectPage from "./components/AuthRedirectPage.jsx";
 
 const router = createBrowserRouter([
     {
@@ -69,6 +70,10 @@ const router = createBrowserRouter([
             {
                 path: "*",
                 element: <NotFoundScreen />, // Route 404
+            },
+            {
+                path: "auth", 
+                element: <AuthRedirectPage />,  
             },
         ],
     },

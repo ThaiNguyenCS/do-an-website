@@ -16,6 +16,8 @@ import "react-toastify/dist/ReactToastify.css";
 const PromotionEffectivenessChart = ({ selectedDate }) => {
     const [data, setData] = useState([]);
     const [detailData, setDetailData] = useState([]);
+    const [showUsed, setShowUsed] = useState(false);
+    const [showNotUsed, setShowNotUsed] = useState(false);
     const [loading, setLoading] = useState(true);
     const [errorMessage, setErrorMessage] = useState("");
 
@@ -69,50 +71,76 @@ const PromotionEffectivenessChart = ({ selectedDate }) => {
         }
     };
 
+    const usedPromotions = detailData.filter(item => item.DuocSuDung);
+    const notUsedPromotions = detailData.filter(item => !item.DuocSuDung);
+
     return (
-        <div>
-            <h2>Hiệu quả chương trình khuyến mãi</h2>
+        <div className="p-6 bg-white rounded-2xl shadow-lg mb-6">
+            <h2 className="text-2xl font-semibold mb-4">Hiệu quả chương trình khuyến mãi</h2>
             {loading ? (
-                <p>Loading...</p>
+                <p className="text-center text-gray-500">Đang tải...</p>
             ) : (
                 <>
-                    <ResponsiveContainer width="100%" height={400}>
-                        <BarChart data={data}>
-                            <CartesianGrid strokeDasharray="3 3" />
-                            <XAxis dataKey="name" />
-                            <YAxis />
-                            <Tooltip />
-                            <Legend />
-                            <Bar dataKey="value" fill="#82ca9d" />
+                    <ResponsiveContainer width="100%" height={350}>
+                        <BarChart layout="vertical" data={data} margin={{ top: 20, right: 30, left: 20, bottom: 5 }}>
+                            <CartesianGrid strokeDasharray="3 3" stroke="#e5e5e5" />
+                            <XAxis type="number" tick={{ fill: "#4B5563", fontSize: 12 }} />
+                            <YAxis type="category" dataKey="name" tick={{ fill: "#4B5563", fontSize: 12 }} />
+                            <Tooltip contentStyle={{ backgroundColor: "#F3F4F6", border: "1px solid #E5E7EB" }} labelStyle={{ color: "#374151" }} />
+                            <Legend wrapperStyle={{ paddingTop: 10 }} />
+                            <Bar dataKey="value" fill="#60A5FA" />
                         </BarChart>
                     </ResponsiveContainer>
-                    <div style={{ marginTop: "20px" }}>
-                        <h3>Chi tiết chương trình khuyến mãi</h3>
-                        <ul style={{ listStyleType: "none", padding: 0 }}>
-                            {detailData.map((item, index) => (
-                                <li
-                                    key={index}
-                                    style={{
-                                        marginBottom: "10px",
-                                        padding: "10px",
-                                        border: "1px solid #ddd",
-                                        borderRadius: "5px",
-                                        backgroundColor: item.DuocSuDung
-                                            ? "#e0f7fa"
-                                            : "#ffebee",
-                                    }}
-                                >
-                                    <strong>{item.name}</strong> -{" "}
-                                    {item.DuocSuDung
-                                        ? "Đã sử dụng"
-                                        : "Chưa sử dụng"}
-                                </li>
-                            ))}
-                        </ul>
+
+                    <div className="mt-5 grid grid-cols-2 gap-4">
+                        <div className="col-span-1">
+                            <button
+                                className="w-full py-2 px-4 bg-teal-500 text-white font-semibold rounded-md hover:bg-teal-600"
+                                onClick={() => setShowUsed(!showUsed)}
+                            >
+                                Đã sử dụng
+                            </button>
+                            <div
+                                className={`transition-all duration-500 ease-in-out transform ${
+                                    showUsed ? 'max-h-96 opacity-100' : 'max-h-0 opacity-0'
+                                } overflow-hidden`}
+                            >
+                                <ul className="mt-3 space-y-3">
+                                    {usedPromotions.map((item, index) => (
+                                        <li key={index} className="p-3 border border-teal-300 bg-teal-50 rounded-md">
+                                            <strong>{item.name}</strong> - Đã sử dụng
+                                        </li>
+                                    ))}
+                                </ul>
+                            </div>
+                        </div>
+
+                        <div className="col-span-1">
+                            <button
+                                className="w-full py-2 px-4 bg-red-500 text-white font-semibold rounded-md hover:bg-red-600"
+                                onClick={() => setShowNotUsed(!showNotUsed)}
+                            >
+                                Chưa sử dụng
+                            </button>
+                            <div
+                                className={`transition-all duration-500 ease-in-out transform ${
+                                    showNotUsed ? 'max-h-96 opacity-100' : 'max-h-0 opacity-0'
+                                } overflow-hidden`}
+                            >
+                                <ul className="mt-3 space-y-3">
+                                    {notUsedPromotions.map((item, index) => (
+                                        <li key={index} className="p-3 border border-red-300 bg-red-50 rounded-md">
+                                            <strong>{item.name}</strong> - Chưa sử dụng
+                                        </li>
+                                    ))}
+                                </ul>
+                            </div>
+
+                        </div>
                     </div>
                 </>
             )}
-            {errorMessage && <p style={{ color: "red" }}>{errorMessage}</p>}
+            {errorMessage && <p className="text-red-500">{errorMessage}</p>}
             <ToastContainer />
         </div>
     );

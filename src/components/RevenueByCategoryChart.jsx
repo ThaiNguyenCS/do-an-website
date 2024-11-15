@@ -53,30 +53,34 @@ const RevenueByCategoryChart = ({ selectedDate }) => {
     };
 
     return (
-        <div>
-            <h2>Báo cáo doanh thu theo danh mục</h2>
-            {loading ? (
-                <p>Loading...</p>
-            ) : (
-                <ResponsiveContainer width="100%" height={400}>
-                    <BarChart data={data}>
-                        <CartesianGrid strokeDasharray="3 3" />
-                        <XAxis dataKey="name" />
-                        <YAxis />
-                        <Tooltip />
-                        <Legend />
-                        <Bar
-                            dataKey="totalRevenue"
-                            name="Doanh thu"
-                            fill="#8884d8"
-                        />
-                    </BarChart>
-                </ResponsiveContainer>
-            )}
-            {errorMessage && <p style={{ color: "red" }}>{errorMessage}</p>}
-            <ToastContainer />
-        </div>
-    );
+    <div className="p-6 bg-white rounded-2xl shadow-lg mb-6">
+        <h2 className="text-2xl font-semibold mb-4">Báo cáo doanh thu theo danh mục</h2>
+        {loading ? (
+            <p className="text-center text-gray-500">Đang tải...</p>
+        ) : (
+            <ResponsiveContainer width="100%" height={400}>
+                <BarChart data={data} margin={{ top: 20, right: 30, left: 20, bottom: 5 }}>
+                    <CartesianGrid strokeDasharray="3 3" stroke="#ddd" />
+                    <XAxis dataKey="name" tick={{ fill: "#555", fontSize: 12 }} />
+                    <YAxis tick={{ fill: "#555", fontSize: 12 }} />
+                    <Tooltip 
+                        contentStyle={{ backgroundColor: "#f9f9f9", border: "1px solid #ccc" }} 
+                        labelStyle={{ color: "#333" }}
+                    />
+                    <Legend wrapperStyle={{ paddingTop: 10 }} />
+                    <Bar
+                        dataKey="totalRevenue"
+                        name="Doanh thu"
+                        fill="#4CAF50"
+                    />
+                </BarChart>
+            </ResponsiveContainer>
+        )}
+        {errorMessage && <p className="text-red-500 mt-4">{errorMessage}</p>}
+        <ToastContainer />
+    </div>
+);
+
 };
 
 export default RevenueByCategoryChart;

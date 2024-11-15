@@ -11,80 +11,80 @@ const UserInfo = ({ userInfo, updateUser }) => {
     };
 
     return (
-        <>
-            <div className="hidden sm:block flex-1 bg-white border-[2px] border-[#EFF1F3] p-6 mb-4 sm:mb-0 rounded-xl">
-                <h3 className="text-lg font-medium mb-4">
-                    Thông tin tài khoản
-                </h3>
-                <div className="sm:flex block gap-4">
-                    <div className="flex-1">
-                        <label>Họ và tên</label>
-                        <div className="mt-2 mb-4 bg-[#EFF1F3] border-[2px] px-4 py-1 rounded-xl">
-                            {isEditing ? (
-                                <input
-                                    type="text"
-                                    value={editedName}
-                                    onChange={(e) =>
-                                        setEditedName(e.target.value)
-                                    }
-                                    className="border-[2px] w-full px-4 py-2 rounded-xl"
-                                />
-                            ) : (
-                                userInfo.name
-                            )}
-                        </div>
-                        <label>Địa chỉ email</label>
-                        <div className="mt-2 mb-4 bg-[#EFF1F3] border-[2px] px-4 py-1 rounded-xl">
-                            {userInfo.email}
-                        </div>
-                        <label>Địa chỉ</label>
-                        <div className="mt-2 mb-4 bg-[#EFF1F3] border-[2px] px-4 py-1 rounded-xl">
-                            {isEditing ? (
-                                <input
-                                    type="text"
-                                    value={editedAddress}
-                                    onChange={(e) =>
-                                        setEditedAddress(e.target.value)
-                                    }
-                                    className="border-[2px] w-full px-4 py-2 rounded-xl"
-                                />
-                            ) : (
-                                userInfo.address
-                            )}
-                        </div>
+        <div className="hidden sm:block flex-1 bg-white border border-gray-200 p-6 mb-4 sm:mb-0 rounded-lg shadow-sm">
+            <h3 className="text-xl font-semibold text-gray-800 mb-6">
+                Thông tin tài khoản
+            </h3>
+            <div className="sm:flex gap-6">
+                <div className="flex-1">
+                    <label className="text-gray-600 font-medium">Họ và tên</label>
+                    <div className="mt-2 mb-4">
+                        {isEditing ? (
+                            <input
+                                type="text"
+                                value={editedName}
+                                onChange={(e) => setEditedName(e.target.value)}
+                                className="border border-gray-300 w-full px-4 py-2 rounded-lg focus:border-blue-400"
+                            />
+                        ) : (
+                            <div className="bg-gray-100 px-4 py-2 rounded-lg text-gray-700">
+                                {userInfo.name}
+                            </div>
+                        )}
                     </div>
-                    <div className="flex-1">
-                        <label>ID người dùng</label>
-                        <div className="mt-2 mb-4 bg-[#EFF1F3] border-[2px] px-4 py-1 rounded-xl">
-                            {userInfo._id}
-                        </div>
-                        <label>Role</label>
-                        <div className="mt-2 mb-4 bg-[#EFF1F3] border-[2px] px-4 py-1 rounded-xl">
-                            {userInfo.role}
-                        </div>
-                        <label>Thời gian tham gia</label>
-                        <div className="mt-2 mb-4 bg-[#EFF1F3] border-[2px] px-4 py-1 rounded-xl">
-                            {new Date(userInfo.createdAt).toLocaleDateString()}
-                        </div>
+                    <label className="text-gray-600 font-medium">Địa chỉ email</label>
+                    <div className="mt-2 mb-4 bg-gray-100 px-4 py-2 rounded-lg text-gray-700">
+                        {userInfo.email}
+                    </div>
+                    <label className="text-gray-600 font-medium">Địa chỉ</label>
+                    <div className="mt-2 mb-4">
+                        {isEditing ? (
+                            <input
+                                type="text"
+                                value={editedAddress}
+                                onChange={(e) => setEditedAddress(e.target.value)}
+                                className="border border-gray-300 w-full px-4 py-2 rounded-lg focus:border-blue-400"
+                            />
+                        ) : (
+                            <div className="bg-gray-100 px-4 py-2 rounded-lg text-gray-700">
+                                {userInfo.address}
+                            </div>
+                        )}
                     </div>
                 </div>
+                <div className="flex-1">
+                    <label className="text-gray-600 font-medium">ID người dùng</label>
+                    <div className="mt-2 mb-4 bg-gray-100 px-4 py-2 rounded-lg text-gray-700">
+                        {userInfo._id}
+                    </div>
+                    <label className="text-gray-600 font-medium">Role</label>
+                    <div className="mt-2 mb-4 bg-gray-100 px-4 py-2 rounded-lg text-gray-700">
+                        {userInfo.role}
+                    </div>
+                    <label className="text-gray-600 font-medium">Thời gian tham gia</label>
+                    <div className="mt-2 mb-4 bg-gray-100 px-4 py-2 rounded-lg text-gray-700">
+                        {new Date(userInfo.createdAt).toLocaleDateString()}
+                    </div>
+                </div>
+            </div>
+            <div className="mt-4">
                 {isEditing ? (
                     <button
                         onClick={handleSave}
-                        className="mt-4 bg-blue-500 text-white px-4 py-2 rounded-xl font-bold"
+                        className="bg-blue-500 hover:bg-blue-600 text-white px-5 py-2 rounded-lg font-medium transition duration-200"
                     >
                         Lưu
                     </button>
                 ) : (
                     <button
                         onClick={() => setIsEditing(true)}
-                        className="mt-4 bg-green-500 text-white px-4 py-2 rounded-xl font-bold"
+                        className="bg-green-500 hover:bg-green-600 text-white px-5 py-2 rounded-lg font-medium transition duration-200"
                     >
                         Sửa thông tin
                     </button>
                 )}
             </div>
-        </>
+        </div>
     );
 };
 
