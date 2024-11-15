@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from "react";
 import { FiTrash2, FiEdit2, FiEye, FiAlertCircle } from "react-icons/fi";
 import axios from "axios";
-import { authConfig } from "../utils/axiosConfig";
+import { getAuthConfig } from "../utils/axiosConfig";
 import { formatDateTime } from "../utils/formatter";
 
 const ManageVoucher = () => {
@@ -21,7 +21,7 @@ const ManageVoucher = () => {
 
     const fetchVouchers = async () => {
         try {
-            const response = await axios.get("https://domstore.azurewebsites.net/api/v1/vouchers", authConfig);
+            const response = await axios.get("https://domstore.azurewebsites.net/api/v1/vouchers", getAuthConfig());
             const data = response.data;
 
             setVouchers(data.data.vouchers);
@@ -59,10 +59,10 @@ const ManageVoucher = () => {
                 await axios.put(
                     `https://domstore.azurewebsites.net/api/v1/vouchers/${selectedVoucher.id}`,
                     formData,
-                    authConfig
+                    getAuthConfig()
                 );
             } else {
-                await axios.post("https://domstore.azurewebsites.net/api/v1/vouchers", formData, authConfig);
+                await axios.post("https://domstore.azurewebsites.net/api/v1/vouchers", formData, getAuthConfig());
             }
             fetchVouchers();
             setIsModalOpen(false);
@@ -74,7 +74,7 @@ const ManageVoucher = () => {
 
     const handleDelete = async (id) => {
         try {
-            await axios.delete(`https://domstore.azurewebsites.net/api/v1/vouchers/${id}`, authConfig);
+            await axios.delete(`https://domstore.azurewebsites.net/api/v1/vouchers/${id}`, getAuthConfig());
             fetchVouchers();
             setIsDeleteModalOpen(false);
         } catch (error) {
@@ -85,8 +85,8 @@ const ManageVoucher = () => {
     const handleViewDetails = async (voucher) => {
         try {
             const [detailsResponse, statsResponse] = await Promise.all([
-                axios.get(`https://domstore.azurewebsites.net/api/v1/vouchers/${voucher._id}`, authConfig),
-                axios.get(`https://domstore.azurewebsites.net/api/v1/vouchers/${voucher._id}/stats`, authConfig),
+                axios.get(`https://domstore.azurewebsites.net/api/v1/vouchers/${voucher._id}`, getAuthConfig()),
+                axios.get(`https://domstore.azurewebsites.net/api/v1/vouchers/${voucher._id}/stats`, getAuthConfig()),
             ]);
             setSelectedVoucher(detailsResponse.data);
             setVoucherStats(statsResponse.data);
@@ -122,7 +122,7 @@ const ManageVoucher = () => {
 
     const deactivateExpiredVouchers = async () => {
         try {
-            await axios.post("https://domstore.azurewebsites.net/api/v1/vouchers/deactivate_expired", authConfig);
+            await axios.post("https://domstore.azurewebsites.net/api/v1/vouchers/deactivate_expired", getAuthConfig());
             fetchVouchers();
             alert("Expired vouchers have been deactivated successfully");
         } catch (error) {

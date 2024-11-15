@@ -2,7 +2,7 @@ import React, { useEffect, useState } from "react";
 import styles from "./AdminProductDetail.module.css";
 import { useLocation, useNavigate, useParams } from "react-router-dom";
 import axios from "axios";
-import { authConfig } from "../utils/axiosConfig";
+import { authConfig, getAuthConfig } from "../utils/axiosConfig";
 import LoadingPopup from "./LoadingPopup";
 import { IoTrashOutline } from "react-icons/io5";
 import IcReturn from "../assets/ic_return.png";
@@ -58,7 +58,7 @@ const AdminProductDetail = () => {
             bodyData["name"] = product.name;
             bodyData["description"] = product.description;
             bodyData["price"] = product.price;
-            const response = await axios.put(`${apiURL}/products/${id}`, bodyData, authConfig);
+            const response = await axios.put(`${apiURL}/products/${id}`, bodyData, getAuthConfig());
             console.log(response.data);
         } catch (error) {
             console.log(error);
@@ -72,7 +72,7 @@ const AdminProductDetail = () => {
         try {
             // console.log(`${apiURL}/products/${id}`, authConfig);
 
-            const response = await axios.delete(`${apiURL}/products/${id}`, authConfig);
+            const response = await axios.delete(`${apiURL}/products/${id}`, getAuthConfig());
             const data = response.data;
             if (data.status === "success") {
                 navigate("/admin/products"); // navigate to products

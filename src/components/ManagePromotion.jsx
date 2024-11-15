@@ -2,7 +2,7 @@ import React, { useEffect, useRef, useState } from "react";
 import styles from "./ManagePromotion.module.css";
 import Promotion from "./Promotion";
 import axios from "axios";
-import { authConfig } from "../utils/axiosConfig";
+import { authConfig, getAuthConfig } from "../utils/axiosConfig";
 import PromotionModifyPopup from "./PromotionModifyPopup";
 import PromotionAddPopup from "./PromotionAddPopup";
 import LoadingPopup from "./LoadingPopup";
@@ -19,7 +19,7 @@ const ManagePromotion = () => {
 
     async function getPromotions() {
         try {
-            const response = await axios.get(`${apiURL}/promotion`, authConfig);
+            const response = await axios.get(`${apiURL}/promotion`, getAuthConfig());
             const data = response.data;
             if (data.status === "success") {
                 setPromotions(data.data.promotions);
@@ -36,7 +36,7 @@ const ManagePromotion = () => {
         const { promotion, itemContainer, disappearStyle } = deleteInfoRef.current;
         if (promotion) {
             try {
-                const response = await axios.delete(`${apiURL}/promotion/${promotion._id}`, authConfig);
+                const response = await axios.delete(`${apiURL}/promotion/${promotion._id}`, getAuthConfig());
                 const data = response.data;
                 if (data.status === "success") {
                     if (itemContainer) {
@@ -70,7 +70,7 @@ const ManagePromotion = () => {
     async function modifyPromotion(promotion) {
         try {
             promotion.discountPercent = parseInt(promotion.discountPercent);
-            const response = await axios.put(`${apiURL}/promotion/${promotion._id}`, promotion, authConfig);
+            const response = await axios.put(`${apiURL}/promotion/${promotion._id}`, promotion, getAuthConfig());
             const data = response.data;
             if (data.status === "success") {
                 getPromotions(); // refetch data
@@ -88,7 +88,7 @@ const ManagePromotion = () => {
     async function addPromotion(promotion) {
         try {
             promotion.discountPercent = parseInt(promotion.discountPercent);
-            const response = await axios.post(`${apiURL}/promotion`, promotion, authConfig);
+            const response = await axios.post(`${apiURL}/promotion`, promotion, getAuthConfig());
             const data = response.data;
             if (data.status === "success") {
                 getPromotions(); // refetch data
