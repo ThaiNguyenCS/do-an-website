@@ -4,8 +4,7 @@ import { FaShoppingCart, FaStar, FaStarHalfAlt } from "react-icons/fa";
 import { BsChevronLeft, BsChevronRight } from "react-icons/bs";
 import axios from "axios";
 import { authConfig } from "../utils/axiosConfig";
-const apiURL = import.meta.env.VITE_API_URL;
-
+const apiURL = import.meta.env.VITE_API_URL
 const ProductDetails = () => {
     const { productId } = useParams(); // Lấy productId từ URL
     const [currentImage, setCurrentImage] = useState(0);
@@ -61,13 +60,12 @@ const ProductDetails = () => {
             setAddingToCart(true);
             const cartData = {
                 product_id: product._id,
-                size: selectedSize,
-                color: selectedColor,
                 quantity: 1,
+                color: selectedColor,
+                size: selectedSize,
             };
 
-            const response = await axios.post("https://domstore.azurewebsites.net/api/v1/carts", cartData, authConfig);
-
+            const response = await axios.post(`${apiURL}/carts`, cartData, authConfig);
             if (response.data.status === "success") {
                 setShowPopup(true);
                 setTimeout(() => setShowPopup(false), 3000);

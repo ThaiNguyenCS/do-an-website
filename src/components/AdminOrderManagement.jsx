@@ -1,312 +1,345 @@
 import React, { useState, useEffect } from "react";
-import { FiTruck, FiPackage, FiCheck, FiX, FiEdit2, FiTrash2, FiClock, FiSearch } from "react-icons/fi";
+import { FiSearch, FiChevronLeft, FiChevronRight } from "react-icons/fi";
+import { ToastContainer, toast } from "react-toastify";
+import "react-toastify/dist/ReactToastify.css";
+import { format } from "date-fns";
 import axios from "axios";
-import { authConfig } from "../utils/axiosConfig";
+import { formatPrice } from "../utils/formatter";
 
-const AdminOrderManagement = () => {
+const OrderManagement = () => {
     const [orders, setOrders] = useState([]);
-    const [selectedOrder, setSelectedOrder] = useState(null);
-    const [isEditing, setIsEditing] = useState(false);
-    const [searchQuery, setSearchQuery] = useState("");
-    const [filteredOrders, setFilteredOrders] = useState([]);
-    const [editFormData, setEditFormData] = useState({
+    const [loading, setLoading] = useState(false);
+    const [error, setError] = useState(null);
+    const [isAuthenticated, setIsAuthenticated] = useState(false);
+    const [filters, setFilters] = useState({
+        page: 1,
+        limit: 10,
         status: "",
-        shippingAddress: "",
-        shippingCarrier: "",
-        trackingNumber: "",
+        search: "",
+        startDate: "",
+        endDate: "",
+        minTotal: "",
+        maxTotal: "",
     });
 
-    useEffect(() => {
-        fetchOrders();
-    }, []);
+    // Updated authentication config
+    const getAuthConfig = () => {
+        const authToken = localStorage.getItem("authToken");
+        return {
+            headers: {
+                "Content-Type": "application/json",
+                Authorization: authToken ? `Bearer ${authToken}` : "",
+            },
+            validateStatus: (status) => status < 500,
+        };
+    };
 
     useEffect(() => {
-        const filtered = orders.filter((order) =>
-            order._id.toString().toLowerCase().includes(searchQuery.toLowerCase())
-        );
-        setFilteredOrders(filtered);
-    }, [searchQuery, orders]);
+        const authToken = localStorage.getItem("authToken");
+        if (authToken) {
+            setIsAuthenticated(true);
+        }
+    }, []);
 
     const fetchOrders = async () => {
         try {
-            const response = await axios.get("https://domstore.azurewebsites.net/api/v1/admin/orders", authConfig);
-            const data = response.data
-            setOrders(data.data.orders);
-            setFilteredOrders(data.data.orders);
-        } catch (error) {
-            console.error("Lỗi tải đơn hàng:", error);
+            setLoading(true);
+            setError(null);
+
+            const authConfig = getAuthConfig();
+            if (!authConfig.headers.Authorization) {
+                setIsAuthenticated(false);
+                toast.error("Please login to continue");
+                setError("Authentication required");
+                return;
+            }
+
+            const queryParams = new URLSearchParams({
+                page: filters.page,
+                limit: filters.limit,
+                ...(filters.status && { status: filters.status }),
+                ...(filters.search && { search: filters.search }),
+                ...(filters.startDate && { startDate: filters.startDate }),
+                ...(filters.endDate && { endDate: filters.endDate }),
+                ...(filters.minTotal && { minTotal: filters.minTotal }),
+                ...(filters.maxTotal && { maxTotal: filters.maxTotal }),
+            }).toString();
+
+            const response = await axios.get(`https://domstore.azurewebsites.net/api/v1/admin/orders?${queryParams}`, {
+                headers: {
+                    Authorization: `Bearer ${localStorage.getItem("authToken")}`,
+                },
+            });
+            if (response.status === 401) {
+                setIsAuthenticated(false);
+                localStorage.removeItem("authToken");
+                toast.error("Session expired. Please login again.");
+                setError("Session expired");
+                return;
+            }
+
+            // Ensure orders is always an array
+            //   console.log(response.data);
+            const data = response.data;
+            const ordersData = data.data.orders || [];
+            //   console.log(ordersData);
+
+            setOrders(ordersData);
+            setIsAuthenticated(true);
+        } catch (err) {
+            setError(err.message);
+            toast.error(err.message);
+            // Set empty array in case of error
+            setOrders([]);
+        } finally {
+            setLoading(false);
         }
     };
 
-    const fetchOrderById = async (id) => {
+    const updateOrderStatus = async (orderId, newStatus) => {
         try {
-            const response = await axios.get(
-                `https://domstore.azurewebsites.net/api/v1/admin/orders/${id}`,
+            const authConfig = getAuthConfig();
+            if (!authConfig.headers.Authorization) {
+                setIsAuthenticated(false);
+                toast.error("Please login to continue");
+                return;
+            }
+
+            const response = await axios.put(
+                `https://domstore.azurewebsites.net/api/v1/admin/orders/${orderId}`,
+                { status: newStatus },
                 authConfig
             );
-            const data = response.data
-            setSelectedOrder(data.data.order);
-            setEditFormData({
-                status: data.data.order.status,
-                shippingAddress: data.data.order.address,
-                // shippingCarrier: data.data.order.shippingCarrier,
-                // trackingNumber: data.data.order.trackingNumber,
-            });
-        } catch (error) {
-            console.error("Lỗi tải chi tiết đơn hàng:", error);
-        }
-    };
 
-    const updateOrder = async (orderId) => {
-        try {
-            await axios.put(`https://domstore.azurewebsites.net/api/v1/admin/orders/${orderId}`, editFormData, authConfig);
-            fetchOrderById(orderId);
-            setIsEditing(false);
+            if (response.status === 401) {
+                setIsAuthenticated(false);
+                localStorage.removeItem("authToken");
+                toast.error("Session expired. Please login again.");
+                return;
+            }
+
+            toast.success("Order status updated successfully");
             fetchOrders();
-        } catch (error) {
-            console.error("Lỗi cập nhật đơn hàng:", error);
+        } catch (err) {
+            toast.error(err.message);
         }
     };
 
-    const handleInputChange = (e) => {
+    useEffect(() => {
+        if (isAuthenticated) {
+            fetchOrders();
+        }
+    }, [filters, isAuthenticated]);
+
+    const handleSearch = (e) => {
+        setFilters((prev) => ({ ...prev, search: e.target.value }));
+    };
+
+    const handleFilterChange = (e) => {
         const { name, value } = e.target;
-        setEditFormData((prev) => ({
-            ...prev,
-            [name]: value,
-        }));
+        setFilters((prev) => ({ ...prev, [name]: value }));
     };
 
-    const getStatusIcon = (status) => {
-        switch (status.toLowerCase()) {
-            case "processing":
-                return <FiClock className="text-yellow-500" />;
-            case "shipped":
-                return <FiTruck className="text-blue-500" />;
-            case "delivered":
-                return <FiCheck className="text-green-500" />;
-            case "cancelled":
-                return <FiX className="text-red-500" />;
-            default:
-                return <FiPackage className="text-gray-500" />;
-        }
+    const handlePageChange = (newPage) => {
+        setFilters((prev) => ({ ...prev, page: newPage }));
     };
+
+    // Error Boundary Component
+    const ErrorFallback = ({ error, resetErrorBoundary }) => (
+        <div className="min-h-screen flex items-center justify-center bg-gray-100">
+            <div className="bg-white p-8 rounded-lg shadow-md max-w-md w-full">
+                <h2 className="text-2xl font-bold text-red-600 mb-4">Something went wrong</h2>
+                <p className="text-gray-600 mb-4">{error.message}</p>
+                <button
+                    onClick={resetErrorBoundary}
+                    className="w-full bg-blue-500 text-white py-2 px-4 rounded hover:bg-blue-600 transition-colors"
+                >
+                    Try again
+                </button>
+            </div>
+        </div>
+    );
+
+    if (!isAuthenticated) {
+        return (
+            <div className="min-h-screen flex items-center justify-center bg-gray-100">
+                <div className="bg-white p-8 rounded-lg shadow-md">
+                    <p className="text-red-600 text-lg">Please login to access this page</p>
+                </div>
+            </div>
+        );
+    }
 
     return (
-        <div className="container mx-auto">
-            <h1 className="text-3xl font-bold mb-6">Quản Lý Đơn Hàng</h1>
-            <div className="flex flex-col md:flex-row gap-6">
-                <div className="w-full md:w-1/3">
-                    <div className="mb-4">
-                        <div className="relative">
-                            <input
-                                type="text"
-                                placeholder="Tìm kiếm đơn hàng theo ID..."
-                                value={searchQuery}
-                                onChange={(e) => setSearchQuery(e.target.value)}
-                                className="w-full pl-10 pr-4 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
-                            />
-                            <FiSearch className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400" />
-                        </div>
+        <div className="min-h-screen bg-gray-100 p-4 md:p-6">
+            <ToastContainer position="top-right" autoClose={3000} />
+
+            {/* Filters Section */}
+            <div className="bg-white rounded-lg shadow-md p-4 mb-6">
+                <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
+                    <div className="relative">
+                        <input
+                            type="text"
+                            placeholder="Tìm kiếm đơn hàng..."
+                            className="w-full pl-10 pr-4 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-400"
+                            value={filters.search}
+                            onChange={handleSearch}
+                        />
+                        <FiSearch className="absolute left-3 top-3 text-gray-400" />
                     </div>
-                    <h2 className="text-xl font-semibold mb-4">Danh Sách Đơn Hàng</h2>
-                    <div className="bg-white shadow-md rounded-lg overflow-hidden">
-                        {filteredOrders.map((order) => (
-                            <div
-                                key={order._id}
-                                className="p-4 border-b border-gray-200 hover:bg-gray-50 cursor-pointer transition duration-150 ease-in-out"
-                                onClick={() => fetchOrderById(order._id)}
-                            >
-                                <div className="flex items-center justify-between">
-                                    <div>
-                                        <p className="font-semibold">Đơn hàng #{order._id}</p>
-                                        <p className="text-sm text-gray-600">
-                                            {new Date(order.createdAt).toLocaleDateString()}
-                                        </p>
-                                    </div>
-                                    <div className="flex items-center">
-                                        {getStatusIcon(order.status)}
-                                        <span className="ml-2 text-sm">
-                                            {order.status === "Processing"
-                                                ? "Đang xử lý"
-                                                : order.status === "Shipped"
-                                                ? "Đã gửi"
-                                                : order.status === "Delivered"
-                                                ? "Đã giao"
-                                                : order.status === "Cancelled"
-                                                ? "Đã hủy"
-                                                : order.status}
-                                        </span>
-                                    </div>
-                                </div>
-                            </div>
-                        ))}
-                        {filteredOrders.length === 0 && (
-                            <div className="p-4 text-center text-gray-500">Không tìm thấy đơn hàng</div>
-                        )}
+
+                    <select
+                        name="status"
+                        value={filters.status}
+                        onChange={handleFilterChange}
+                        className="w-full p-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-400"
+                    >
+                        <option value="">Tất cả</option>
+                        <option value="Success">Giao thành công</option>
+                        <option value="Failure">Thất bại</option>
+                        <option value="Delivering">Đang vận chuyển</option>
+                        <option value="Order successful">Đặt thành công</option>
+                        <option value="Preparing goods">Đang chuẩn bị hàng</option>
+                        <option value="Waiting for payment">Chờ thanh toán</option>
+                    </select>
+
+                    <input
+                        type="date"
+                        name="startDate"
+                        value={filters.startDate}
+                        onChange={handleFilterChange}
+                        className="w-full p-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-400"
+                    />
+
+                    <input
+                        type="date"
+                        name="endDate"
+                        value={filters.endDate}
+                        onChange={handleFilterChange}
+                        className="w-full p-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-400"
+                    />
+                </div>
+            </div>
+
+            {/* Error State */}
+            {error && (
+                <div className="bg-red-100 border border-red-400 text-red-700 px-4 py-3 rounded relative mb-6">
+                    {error}
+                </div>
+            )}
+
+            {/* Loading State */}
+            {loading ? (
+                <div className="flex justify-center items-center h-64">
+                    <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-blue-500"></div>
+                </div>
+            ) : (
+                /* Orders Table */
+                <div className="bg-white rounded-lg shadow-md overflow-hidden">
+                    <div className="overflow-x-auto">
+                        <table className="min-w-full divide-y divide-gray-200">
+                            <thead className="bg-gray-50">
+                                <tr>
+                                    <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                                        Mã đơn hàng
+                                    </th>
+                                    <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                                        Ngày đặt
+                                    </th>
+                                    <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                                        Khách hàng
+                                    </th>
+                                    <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                                        Tổng
+                                    </th>
+                                    <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                                        Trạng thái
+                                    </th>
+                                    <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider"></th>
+                                </tr>
+                            </thead>
+                            <tbody className="bg-white divide-y divide-gray-200">
+                                {orders && orders.length > 0 ? (
+                                    orders.map((order) => (
+                                        <tr key={order._id}>
+                                            <td className="px-6 py-4 whitespace-nowrap">{order._id}</td>
+                                            <td className="px-6 py-4 whitespace-nowrap">
+                                                {format(new Date(order.createdAt), "dd/MM/yyyy")}
+                                            </td>
+                                            <td className="px-6 py-4 whitespace-nowrap">{order.name}</td>
+                                            <td className="px-6 py-4 whitespace-nowrap">{formatPrice(order.totalPrice)}</td>
+                                            <td className="px-6 py-4 whitespace-nowrap">
+                                                <span
+                                                    className={`px-2 inline-flex text-xs leading-5 font-semibold rounded-full 
+                          ${
+                              order.status === "Success"
+                                  ? "bg-green-100 text-green-800"
+                                  : order.status === "Delivering" ||
+                                    order.status === "Waiting for payment" ||
+                                    order.status === "Preparing goods"
+                                  ? "bg-yellow-100 text-yellow-800"
+                                  : order.status === "Failure"
+                                  ? "bg-red-100 text-red-800"
+                                  : "bg-blue-100 text-blue-800"
+                          }
+                        `}
+                                                >
+                                                    {order.status}
+                                                </span>
+                                            </td>
+                                            <td className="px-6 py-4 whitespace-nowrap">
+                                                <select
+                                                    onChange={(e) => updateOrderStatus(order._id, e.target.value)}
+                                                    className="text-sm border rounded p-1"
+                                                    value={order.status}
+                                                >
+                                                    <option value="Delivering">Đang giao hàng</option>
+                                                    <option value="Preparing goods">Đang chuẩn bị hàng</option>
+                                                    <option value="Order successful">Đặt thành công</option>
+                                                    <option value="Success">Giao thành công</option>
+                                                    <option value="Waiting for payment">Chờ thanh toán</option>
+                                                    <option value="Failure">Thất bại</option>
+                                                </select>
+                                            </td>
+                                        </tr>
+                                    ))
+                                ) : (
+                                    <tr>
+                                        <td colSpan="6" className="px-6 py-4 text-center text-gray-500">
+                                            No orders found
+                                        </td>
+                                    </tr>
+                                )}
+                            </tbody>
+                        </table>
                     </div>
                 </div>
-                <div className="w-full md:w-2/3">
-                    <h2 className="text-xl font-semibold mb-4">Chi Tiết Đơn Hàng</h2>
-                    {selectedOrder ? (
-                        <div className="bg-white shadow-md rounded-lg p-6">
-                            <div className="flex justify-between items-center mb-4">
-                                <h3 className="text-lg font-semibold">Đơn hàng #{selectedOrder._id}</h3>
-                                <div className="flex space-x-2">
-                                    <button
-                                        onClick={() => setIsEditing(!isEditing)}
-                                        className="p-2 bg-blue-500 text-white rounded-full hover:bg-blue-600 transition duration-150 ease-in-out"
-                                    >
-                                        <FiEdit2 />
-                                    </button>
-                                </div>
-                            </div>
-                            {isEditing ? (
-                                <div className="grid grid-cols-1 gap-4 mb-4">
-                                    <div>
-                                        <label className="block text-sm font-medium text-gray-700">Trạng thái</label>
-                                        <select
-                                            name="status"
-                                            value={editFormData.status}
-                                            onChange={handleInputChange}
-                                            className="mt-1 block w-full p-2 border rounded"
-                                        >
-                                            <option value="Processing">Đang xử lý</option>
-                                            <option value="Shipped">Đã gửi</option>
-                                            <option value="Delivered">Đã giao</option>
-                                            <option value="Cancelled">Đã hủy</option>
-                                        </select>
-                                    </div>
-                                    <div>
-                                        <label className="block text-sm font-medium text-gray-700">
-                                            Địa chỉ giao hàng
-                                        </label>
-                                        <input
-                                            type="text"
-                                            name="shippingAddress"
-                                            value={editFormData.shippingAddress}
-                                            onChange={handleInputChange}
-                                            className="mt-1 block w-full p-2 border rounded"
-                                        />
-                                    </div>
-                                    <div>
-                                        <label className="block text-sm font-medium text-gray-700">
-                                            Đơn vị vận chuyển
-                                        </label>
-                                        <input
-                                            type="text"
-                                            name="shippingCarrier"
-                                            value={editFormData.shippingCarrier}
-                                            onChange={handleInputChange}
-                                            className="mt-1 block w-full p-2 border rounded"
-                                        />
-                                    </div>
-                                    <div>
-                                        <label className="block text-sm font-medium text-gray-700">Mã vận đơn</label>
-                                        <input
-                                            type="text"
-                                            name="trackingNumber"
-                                            value={editFormData.trackingNumber}
-                                            onChange={handleInputChange}
-                                            className="mt-1 block w-full p-2 border rounded"
-                                        />
-                                    </div>
-                                    <button
-                                        onClick={() => updateOrder(selectedOrder._id)}
-                                        className="bg-green-500 text-white px-4 py-2 rounded hover:bg-green-600 transition duration-150 ease-in-out"
-                                    >
-                                        Cập nhật đơn hàng
-                                    </button>
-                                </div>
-                            ) : (
-                                <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                                    <div>
-                                        <h4 className="font-semibold mb-2">Thông tin đơn hàng</h4>
-                                        <p>Ngày: {new Date(selectedOrder.orderDate).toLocaleString()}</p>
-                                        <p>
-                                            Trạng thái:{" "}
-                                            {selectedOrder.status === "Processing"
-                                                ? "Đang xử lý"
-                                                : selectedOrder.status === "Shipped"
-                                                ? "Đã gửi"
-                                                : selectedOrder.status === "Delivered"
-                                                ? "Đã giao"
-                                                : selectedOrder.status === "Cancelled"
-                                                ? "Đã hủy"
-                                                : selectedOrder.status}
-                                        </p>
-                                        <p>Tổng tiền: {selectedOrder.totalPrice.toLocaleString()}đ</p>
-                                    </div>
-                                    <div>
-                                        <h4 className="font-semibold mb-2">Thông tin vận chuyển</h4>
-                                        <p>Địa chỉ: {selectedOrder.shippingAddress}</p>
-                                        <p>Đơn vị vận chuyển: {selectedOrder.shippingCarrier}</p>
-                                        <p>Mã vận đơn: {selectedOrder.trackingNumber}</p>
-                                    </div>
-                                </div>
-                            )}
-                            <div className="mt-6">
-                                <h4 className="font-semibold mb-2">Sản phẩm</h4>
-                                <div className="overflow-x-auto">
-                                    <table className="w-full text-left">
-                                        <thead>
-                                            <tr className="bg-gray-100">
-                                                <th className="p-2">Sản phẩm</th>
-                                                <th className="p-2">Số lượng</th>
-                                                <th className="p-2">Đơn giá</th>
-                                                <th className="p-2">Thành tiền</th>
-                                            </tr>
-                                        </thead>
-                                        <tbody>
-                                            {selectedOrder && selectedOrder.products.map((item, index) => (
-                                                <tr key={index} className="border-b">
-                                                    <td className="p-2">{item.productId.productName}</td>
-                                                    <td className="p-2">{item.quantity}</td>
-                                                    <td className="p-2">{item.productId.price.toLocaleString()}đ</td>
-                                                    <td className="p-2">
-                                                        {(item.quantity * item.productId.price).toLocaleString()}đ
-                                                    </td>
-                                                </tr>
-                                            ))}
-                                        </tbody>
-                                    </table>
-                                </div>
-                            </div>
-                            <div className="mt-6">
-                                <h4 className="font-semibold mb-2">Lịch sử đơn hàng</h4>
-                                <div className="space-y-4">
-                                    {selectedOrder.statusUpdates.map((update, index) => (
-                                        <div key={index} className="flex items-center">
-                                            {getStatusIcon(update.status)}
-                                            <div className="ml-4">
-                                                <p className="font-semibold">
-                                                    {update.status === "Processing"
-                                                        ? "Đang xử lý"
-                                                        : update.status === "Shipped"
-                                                        ? "Đã gửi"
-                                                        : update.status === "Delivered"
-                                                        ? "Đã giao"
-                                                        : update.status === "Cancelled"
-                                                        ? "Đã hủy"
-                                                        : update.status}
-                                                </p>
-                                                <p className="text-sm text-gray-600">
-                                                    {new Date(update.date).toLocaleString()}
-                                                </p>
-                                            </div>
-                                        </div>
-                                    ))}
-                                </div>
-                            </div>
-                        </div>
-                    ) : (
-                        <div className="bg-white shadow-md rounded-lg p-6 text-center text-gray-500">
-                            Chọn một đơn hàng để xem chi tiết
-                        </div>
-                    )}
-                </div>
+            )}
+
+            {/* Pagination */}
+            <div className="mt-6 flex justify-between items-center">
+                <button
+                    onClick={() => handlePageChange(filters.page - 1)}
+                    disabled={filters.page === 1}
+                    className="flex items-center px-4 py-2 border rounded-md bg-white disabled:opacity-50"
+                >
+                    <FiChevronLeft className="mr-2" />
+                    Trước
+                </button>
+
+                <span className="text-gray-600">Trang {filters.page}</span>
+
+                <button
+                    onClick={() => handlePageChange(filters.page + 1)}
+                    disabled={!Array.isArray(orders) || orders.length < filters.limit}
+                    className="flex items-center px-4 py-2 border rounded-md bg-white disabled:opacity-50"
+                >
+                    Tiếp
+                    <FiChevronRight className="ml-2" />
+                </button>
             </div>
         </div>
     );
 };
 
-export default AdminOrderManagement;
+export default OrderManagement;

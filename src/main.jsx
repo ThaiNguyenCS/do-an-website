@@ -22,7 +22,7 @@ import ProductDetail from "./components/ProductDetail.jsx";
 import AdminOrderManagement from "./components/AdminOrderManagement.jsx";
 import ReportsScreen from "./components/ReportsScreen.jsx";
 import ManageVoucher from "./components/ManageVoucher.jsx";
-
+import Order from "./components/Order.jsx"
 const router = createBrowserRouter([
     {
         path: "/",
@@ -58,6 +58,10 @@ const router = createBrowserRouter([
             {
                 path: "register",
                 element: <RegisterScreen />,
+            },
+            {
+                path: "my-orders",
+                element: <Order />,
             },
             {
                 path: "search",

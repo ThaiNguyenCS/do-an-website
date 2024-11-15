@@ -8,6 +8,7 @@
 .page-title {
     font-size: 2rem;
     margin-bottom: 5px;
+    font-weight: 500;
 }
 
 .product-quantity-found-notify span {

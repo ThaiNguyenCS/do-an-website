@@ -10,8 +10,6 @@
     justify-content: space-between;
 }
 
-
-
 .navigation-container {
     display: flex;
     align-items: center;
@@ -71,6 +69,7 @@
     display: grid;
     border-radius: 999px;
     cursor: pointer;
+    position: relative;
     place-items: center;
 }
 
@@ -82,4 +81,34 @@
     width: 1.2rem;
     vertical-align: middle;
     height: 1.2rem;
+}
+
+.user-drop-menu {
+    position: absolute;
+    top: 150%;
+    height: 0px;
+    right: 0;
+    user-select: none;
+    opacity: 0;
+    width: 250px;
+    transition: opacity 300ms, height 150ms;
+    border-radius: 4px;
+    background-color: white;
+    box-shadow: 2px 2px 6px rgba(170, 170, 170, 0.494);
+}
+
+.user-drop-menu.visible {
+    opacity: 1;
+    transition: opacity 150ms, height 300ms;
+    height: 200px;
+}
+
+.user-drop-menu .item {
+    padding: 10px;
+    font-weight: 500;
+}
+
+.user-drop-menu .item:hover {
+    background-color: rgb(195, 218, 255);
+    color: blue;
 }

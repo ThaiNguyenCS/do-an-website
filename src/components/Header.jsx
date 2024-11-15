@@ -1,26 +1,48 @@
 import styles from "./Header.module.css";
 import dropMenuStyles from "./DropdownMenu.module.css";
 import Logo from "../assets/logo.jsx";
-import { FaRegUser } from "react-icons/fa";
+import { LuUserCircle2 } from "react-icons/lu";
 import { FiShoppingCart } from "react-icons/fi";
 import { IoMdLogOut } from "react-icons/io";
 import DropdownMenu from "./DropdownMenu";
 import { Link, useNavigate } from "react-router-dom";
 import { useSelector, useDispatch } from "react-redux";
 import { logout } from "../slicers/appSlicer";
+import { useEffect, useRef, useState } from "react";
 
 // logo + name, navigation, cart
 
 const Header = () => {
     const navigate = useNavigate();
     const dispatch = useDispatch();
+    const [userMenuOpen, setUserMenuOpen] = useState(false);
     const appStatus = useSelector((state) => state.appState);
+    const userPopupRef = useRef(null);
     console.log(appStatus);
 
     const handleLogout = () => {
         dispatch(logout());
         navigate("/login");
     };
+
+    // Hide popup when user click outside the menu
+    const handleHidePopup = (e) => {
+        if (!userPopupRef.current.contains(e.target)) {
+            setUserMenuOpen(false);
+            document.removeEventListener("mousedown", handleHidePopup);
+        }
+    };
+
+    useEffect(() => {
+        if (userMenuOpen) {
+            document.addEventListener("mousedown", handleHidePopup);
+            return () => {
+                document.removeEventListener("mousedown", handleHidePopup);
+            };
+        } else {
+            document.removeEventListener("mousedown", handleHidePopup);
+        }
+    }, [userMenuOpen]);
 
     return (
         <>
@@ -65,14 +87,30 @@ const Header = () => {
                     )}
                     {appStatus?.isLoggedIn ? (
                         <>
-                            <div className="flex items-center cursor-pointer mr-4" onClick={handleLogout}>
+                            <div
+                                className={styles["action-button"]}
+                                onClick={handleLogout}
+                                style={{ marginRight: "5px" }}
+                            >
                                 <IoMdLogOut className="text-lg" />
                             </div>
                             <div
-                                className="flex items-center cursor-pointer mr-2.5"
-                                onClick={() => navigate("/profile")}
+                                className={styles["action-button"]}
+                                ref={userPopupRef}
+                                style={{ marginRight: "5px" }}
+                                onClick={() => {
+                                    setUserMenuOpen((state) => !state);
+                                }}
                             >
-                                <FaRegUser className="text-lg" />
+                                <LuUserCircle2 className={styles["action-icon"]} />
+                                <div className={`${styles["user-drop-menu"]} ${userMenuOpen ? styles["visible"] : ""}`}>
+                                    <div className={styles["item"]} onClick={() => navigate("/profile")}>
+                                        <span>Xem hồ sơ</span>
+                                    </div>
+                                    <div className={styles["item"]} onClick={() => {navigate("/my-orders")}}>
+                                        <span>Đơn hàng đã đặt</span>
+                                    </div>
+                                </div>
                             </div>
                         </>
                     ) : (
