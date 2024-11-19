@@ -59,7 +59,13 @@ const VoucherManagement = () => {
         e.preventDefault();
         setLoading(true);
         try {
-            await axios.post(`${API_BASE_URL}/vouchers`, formData, {
+            const formattedFormData = {
+                ...formData,
+                discountPercent: parseInt(formData.discountPercent),
+                quantity: parseInt(formData.quantity),
+            };
+
+            await axios.post(`${API_BASE_URL}/vouchers`, formattedFormData, {
                 headers: {
                     Authorization: `Bearer ${localStorage.getItem("authToken")}`,
                 },
@@ -81,9 +87,9 @@ const VoucherManagement = () => {
             await axios.put(
                 `${API_BASE_URL}/vouchers/${selectedVoucher._id}`,
                 {
-                    discountPercent: formData.discountPercent,
+                    discountPercent: parseInt(formData.discountPercent),
                     expirationDate: formData.expirationDate,
-                    quantity: formData.quantity,
+                    quantity: parseInt(formData.quantity),
                 },
                 {
                     headers: {
@@ -154,7 +160,6 @@ const VoucherManagement = () => {
 
     const Modal = ({ isOpen, onClose, title, children }) => {
         console.log("Modal");
-        
 
         if (!isOpen) return null;
         return (
