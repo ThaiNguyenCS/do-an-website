@@ -19,7 +19,7 @@ const adminNavs = {
     products: 2,
     orders: 3,
     reports: 4,
-    supports: 5,
+    "customer-supports": 5,
 };
 
 const AdminSidebarNav = (props) => {
@@ -132,10 +132,11 @@ const AdminSidebarNav = (props) => {
                 </div>
                 <div
                     className={`${styles["nav-item-container"]} ${
-                        adminNavs["supports"] === selectedNav ? styles["selected"] : ""
+                        adminNavs["customer-supports"] === selectedNav ? styles["selected"] : ""
                     }`}
+                    data-link={"/admin/customer-supports"}
                     onClick={(e) => {
-                        navigateToSubsection(e, "supports");
+                        navigateToSubsection(e, "customer-supports");
                     }}
                 >
                     <IcSupport className={styles["nav-icon"]} />

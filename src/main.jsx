@@ -23,6 +23,7 @@ import AdminOrderManagement from "./components/AdminOrderManagement.jsx";
 import ReportsScreen from "./components/ReportsScreen.jsx";
 import ManageVoucher from "./components/ManageVoucher.jsx";
 import Order from "./components/Order.jsx"
+import AdminSupport from "./components/AdminSupport.jsx";
 const router = createBrowserRouter([
     {
         path: "/",
@@ -110,6 +111,10 @@ const router = createBrowserRouter([
             {
                 path: "orders",
                 element: <AdminOrderManagement />,
+            },
+            {
+                path: "customer-supports",
+                element: <AdminSupport></AdminSupport>
             },
             {
                 path: "*",
