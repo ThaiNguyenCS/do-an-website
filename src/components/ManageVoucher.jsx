@@ -1,326 +1,457 @@
 import React, { useState, useEffect } from "react";
-import { FiTrash2, FiEdit2, FiEye, FiAlertCircle } from "react-icons/fi";
+import { FiTrash2, FiEdit2, FiEye, FiPlusCircle, FiRotateCcw } from "react-icons/fi";
+import { BsGraphUp } from "react-icons/bs";
 import axios from "axios";
-import { getAuthConfig } from "../utils/axiosConfig";
-import { formatDateTime } from "../utils/formatter";
 
-const ManageVoucher = () => {
+const VoucherManagement = () => {
     const [vouchers, setVouchers] = useState([]);
-    const [selectedVoucher, setSelectedVoucher] = useState(null);
-    const [voucherStats, setVoucherStats] = useState(null);
-    const [isModalOpen, setIsModalOpen] = useState(false);
+    const [currentPage, setCurrentPage] = useState(1);
+    const [isCreateModalOpen, setIsCreateModalOpen] = useState(false);
+    const [isEditModalOpen, setIsEditModalOpen] = useState(false);
     const [isDeleteModalOpen, setIsDeleteModalOpen] = useState(false);
+    const [isViewModalOpen, setIsViewModalOpen] = useState(false);
+    const [isStatsModalOpen, setIsStatsModalOpen] = useState(false);
+    const [selectedVoucher, setSelectedVoucher] = useState(null);
+    const [loading, setLoading] = useState(false);
+    const [stats, setStats] = useState(null);
     const [formData, setFormData] = useState({
         code: "",
-        discountPercentage: "",
+        discountPercent: "",
         expirationDate: "",
         quantity: "",
     });
-    const [errors, setErrors] = useState({});
-    const [isEditing, setIsEditing] = useState(false);
 
-    const fetchVouchers = async () => {
-        try {
-            const response = await axios.get("https://domstore.azurewebsites.net/api/v1/vouchers", getAuthConfig());
-            const data = response.data;
+    const API_BASE_URL = "https://domstore.azurewebsites.net/api/v1";
 
-            setVouchers(data.data.vouchers);
-            console.log("vouchers", data.data.vouchers);
-        } catch (error) {
-            console.error("Error fetching vouchers:", error);
+    axios.defaults.headers.common["Authorization"] = `Bearer ${localStorage.getItem("authToken")}`;
+
+    axios.interceptors.response.use(
+        (response) => response,
+        (error) => {
+            if (error.response?.status === 401) {
+                console.log("Unauthorized access - redirecting to login");
+            }
+            return Promise.reject(error);
         }
-    };
+    );
 
     useEffect(() => {
         fetchVouchers();
     }, []);
 
-    const handleInputChange = (e) => {
-        setFormData({ ...formData, [e.target.name]: e.target.value });
-        setErrors({ ...errors, [e.target.name]: "" });
-    };
-
-    const validateForm = () => {
-        const newErrors = {};
-        if (!formData.code) newErrors.code = "Code is required";
-        if (!formData.discountPercentage) newErrors.discountPercentage = "Discount percentage is required";
-        if (!formData.expirationDate) newErrors.expirationDate = "Expiration date is required";
-        if (!formData.quantity) newErrors.quantity = "Quantity is required";
-        setErrors(newErrors);
-        return Object.keys(newErrors).length === 0;
-    };
-
-    const handleSubmit = async (e) => {
-        e.preventDefault();
-        if (!validateForm()) return;
-
+    const fetchVouchers = async () => {
         try {
-            if (isEditing) {
-                await axios.put(
-                    `https://domstore.azurewebsites.net/api/v1/vouchers/${selectedVoucher.id}`,
-                    formData,
-                    getAuthConfig()
-                );
-            } else {
-                await axios.post("https://domstore.azurewebsites.net/api/v1/vouchers", formData, getAuthConfig());
-            }
-            fetchVouchers();
-            setIsModalOpen(false);
-            resetForm();
+            const response = await axios.get(`${API_BASE_URL}/vouchers`, {
+                headers: {
+                    Authorization: `Bearer ${localStorage.getItem("authToken")}`,
+                },
+            });
+            setVouchers(response.data.data.vouchers);
         } catch (error) {
-            console.error("Error saving voucher:", error);
+            console.error("Error fetching vouchers:", error);
+            if (error.response?.status === 401) {
+                setVouchers([]);
+            }
         }
     };
 
-    const handleDelete = async (id) => {
+    const handleCreateVoucher = async (e) => {
+        e.preventDefault();
+        setLoading(true);
         try {
-            await axios.delete(`https://domstore.azurewebsites.net/api/v1/vouchers/${id}`, getAuthConfig());
-            fetchVouchers();
+            await axios.post(`${API_BASE_URL}/vouchers`, formData, {
+                headers: {
+                    Authorization: `Bearer ${localStorage.getItem("authToken")}`,
+                },
+            });
+            await fetchVouchers();
+            setIsCreateModalOpen(false);
+            setFormData({ code: "", discountPercent: "", expirationDate: "", quantity: "" });
+        } catch (error) {
+            console.error("Error creating voucher:", error);
+        } finally {
+            setLoading(false);
+        }
+    };
+
+    const handleEditVoucher = async (e) => {
+        e.preventDefault();
+        setLoading(true);
+        try {
+            await axios.put(
+                `${API_BASE_URL}/vouchers/${selectedVoucher._id}`,
+                {
+                    discountPercent: formData.discountPercent,
+                    expirationDate: formData.expirationDate,
+                    quantity: formData.quantity,
+                },
+                {
+                    headers: {
+                        Authorization: `Bearer ${localStorage.getItem("authToken")}`,
+                    },
+                }
+            );
+            await fetchVouchers();
+            setIsEditModalOpen(false);
+            setSelectedVoucher(null);
+        } catch (error) {
+            console.error("Error updating voucher:", error);
+        } finally {
+            setLoading(false);
+        }
+    };
+
+    const handleDeleteVoucher = async () => {
+        setLoading(true);
+        try {
+            await axios.delete(`${API_BASE_URL}/vouchers/${selectedVoucher._id}`, {
+                headers: {
+                    Authorization: `Bearer ${localStorage.getItem("authToken")}`,
+                },
+            });
+            await fetchVouchers();
             setIsDeleteModalOpen(false);
+            setSelectedVoucher(null);
         } catch (error) {
             console.error("Error deleting voucher:", error);
+        } finally {
+            setLoading(false);
         }
     };
 
-    const handleViewDetails = async (voucher) => {
+    const handleDeactivateExpired = async () => {
+        setLoading(true);
         try {
-            const [detailsResponse, statsResponse] = await Promise.all([
-                axios.get(`https://domstore.azurewebsites.net/api/v1/vouchers/${voucher._id}`, getAuthConfig()),
-                axios.get(`https://domstore.azurewebsites.net/api/v1/vouchers/${voucher._id}/stats`, getAuthConfig()),
-            ]);
-            setSelectedVoucher(detailsResponse.data);
-            setVoucherStats(statsResponse.data);
-            setIsModalOpen(true);
-        } catch (error) {
-            console.error("Error fetching voucher details:", error);
-        }
-    };
-
-    const handleEdit = (voucher) => {
-        setIsEditing(true);
-        setSelectedVoucher(voucher);
-        setFormData({
-            code: voucher.code,
-            discountPercentage: voucher.discountPercentage,
-            expirationDate: voucher.expirationDate,
-            quantity: voucher.quantity,
-        });
-        setIsModalOpen(true);
-    };
-
-    const resetForm = () => {
-        setFormData({
-            code: "",
-            discountPercentage: "",
-            expirationDate: "",
-            quantity: "",
-        });
-        setIsEditing(false);
-        setSelectedVoucher(null);
-        setErrors({});
-    };
-
-    const deactivateExpiredVouchers = async () => {
-        try {
-            await axios.post("https://domstore.azurewebsites.net/api/v1/vouchers/deactivate_expired", getAuthConfig());
-            fetchVouchers();
-            alert("Expired vouchers have been deactivated successfully");
+            await axios.post(
+                `${API_BASE_URL}/vouchers/deactivate-expired`,
+                {},
+                {
+                    headers: {
+                        Authorization: `Bearer ${localStorage.getItem("authToken")}`,
+                    },
+                }
+            );
+            await fetchVouchers();
         } catch (error) {
             console.error("Error deactivating expired vouchers:", error);
+        } finally {
+            setLoading(false);
         }
+    };
+
+    const fetchVoucherStats = async (voucherId) => {
+        try {
+            const response = await axios.get(`${API_BASE_URL}/vouchers/${voucherId}/stats`, {
+                headers: {
+                    Authorization: `Bearer ${localStorage.getItem("authToken")}`,
+                },
+            });
+            setStats(response.data.data);
+        } catch (error) {
+            console.error("Error fetching voucher stats:", error);
+        }
+    };
+
+    const Modal = ({ isOpen, onClose, title, children }) => {
+        console.log("Modal");
+        
+
+        if (!isOpen) return null;
+        return (
+            <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
+                <div className="bg-white rounded-lg p-6 w-full max-w-md">
+                    <div className="flex justify-between items-center mb-4">
+                        <h2 className="text-xl font-semibold">{title}</h2>
+                        <button onClick={onClose} className="text-gray-500 hover:text-gray-700">
+                            ×
+                        </button>
+                    </div>
+                    {children}
+                </div>
+            </div>
+        );
     };
 
     return (
         <div className="container mx-auto px-4 py-8">
-            <div className="flex justify-between items-center mb-8">
-                <h1 className="text-3xl font-bold">Quản lý Voucher</h1>
-                <div className="space-x-4">
+            <div className="mb-8 flex justify-between items-center">
+                <h1 className="text-3xl font-bold">Quản lý Voucher </h1>
+                <div className="flex gap-4">
                     <button
-                        onClick={() => setIsModalOpen(true)}
-                        className="bg-blue-600 text-white px-4 py-2 rounded-lg hover:bg-blue-700"
+                        onClick={() => setIsCreateModalOpen(true)}
+                        className="bg-blue-500 text-white px-4 py-2 rounded-lg flex items-center gap-2 hover:bg-blue-600"
                     >
-                        Tạo Voucher
+                        <FiPlusCircle /> Tạo Voucher
                     </button>
                     <button
-                        onClick={deactivateExpiredVouchers}
-                        className="bg-red-600 text-white px-4 py-2 rounded-lg hover:bg-red-700"
+                        onClick={handleDeactivateExpired}
+                        className="bg-orange-500 text-white px-4 py-2 rounded-lg flex items-center gap-2 hover:bg-orange-600"
                     >
-                        Vô hiệu hóa voucher hết hạn
+                        <FiRotateCcw /> Vô hiệu hóa hết hạn
                     </button>
                 </div>
             </div>
 
-            {/* Voucher List */}
             <div className="bg-white rounded-lg shadow overflow-hidden">
                 <table className="min-w-full divide-y divide-gray-200">
                     <thead className="bg-gray-50">
                         <tr>
                             <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                                Code
+                                Mã Voucher
                             </th>
                             <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                                Phần trăm giảm
+                                Giảm giá (%)
                             </th>
                             <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                                Hạn sử dụng
+                                Ngày hết hạn
                             </th>
                             <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
                                 Số lượng
                             </th>
-                            <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider"></th>
+                            <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                                Hành động
+                            </th>
                         </tr>
                     </thead>
                     <tbody className="bg-white divide-y divide-gray-200">
-                        {vouchers &&
-                            vouchers.map((voucher) => (
-                                <tr key={voucher._id}>
-                                    <td className="px-6 py-4 whitespace-nowrap">{voucher.code}</td>
-                                    <td className="px-6 py-4 whitespace-nowrap">{voucher.discountPercent}%</td>
-                                    <td className="px-6 py-4 whitespace-nowrap">
-                                        {formatDateTime(voucher.expirationDate)}
-                                    </td>
-                                    <td className="px-6 py-4 whitespace-nowrap">{voucher.quantity}</td>
-                                    <td className="px-6 py-4 whitespace-nowrap space-x-4">
+                        {vouchers.map((voucher) => (
+                            <tr key={voucher._id}>
+                                <td className="px-6 py-4 whitespace-nowrap">{voucher.code}</td>
+                                <td className="px-6 py-4 whitespace-nowrap">{voucher.discountPercent}%</td>
+                                <td className="px-6 py-4 whitespace-nowrap">
+                                    {new Date(voucher.expirationDate).toLocaleDateString()}
+                                </td>
+                                <td className="px-6 py-4 whitespace-nowrap">{voucher.quantity}</td>
+                                <td className="px-6 py-4 whitespace-nowrap">
+                                    <div className="flex gap-2">
                                         <button
-                                            onClick={() => handleViewDetails(voucher)}
-                                            className="text-blue-600 hover:text-blue-900"
+                                            onClick={() => {
+                                                setSelectedVoucher(voucher);
+                                                setIsViewModalOpen(true);
+                                            }}
+                                            className="text-blue-500 hover:text-blue-700"
                                         >
-                                            <FiEye className="w-5 h-5" />
+                                            <FiEye />
                                         </button>
                                         <button
-                                            onClick={() => handleEdit(voucher)}
-                                            className="text-green-600 hover:text-green-900"
+                                            onClick={() => {
+                                                setSelectedVoucher(voucher);
+                                                setFormData({
+                                                    ...voucher,
+                                                    expirationDate: new Date(voucher.expirationDate)
+                                                        .toISOString()
+                                                        .split("T")[0],
+                                                });
+                                                setIsEditModalOpen(true);
+                                            }}
+                                            className="text-green-500 hover:text-green-700"
                                         >
-                                            <FiEdit2 className="w-5 h-5" />
+                                            <FiEdit2 />
                                         </button>
                                         <button
                                             onClick={() => {
                                                 setSelectedVoucher(voucher);
                                                 setIsDeleteModalOpen(true);
                                             }}
-                                            className="text-red-600 hover:text-red-900"
+                                            className="text-red-500 hover:text-red-700"
                                         >
-                                            <FiTrash2 className="w-5 h-5" />
+                                            <FiTrash2 />
                                         </button>
-                                    </td>
-                                </tr>
-                            ))}
+                                        <button
+                                            onClick={() => {
+                                                setSelectedVoucher(voucher);
+                                                fetchVoucherStats(voucher._id);
+                                                setIsStatsModalOpen(true);
+                                            }}
+                                            className="text-purple-500 hover:text-purple-700"
+                                        >
+                                            <BsGraphUp />
+                                        </button>
+                                    </div>
+                                </td>
+                            </tr>
+                        ))}
                     </tbody>
                 </table>
             </div>
 
-            {/* Voucher Form Modal */}
-            {isModalOpen && (
-                <div className="fixed inset-0 bg-gray-600 bg-opacity-50 overflow-y-auto h-full w-full">
-                    <div className="relative top-20 mx-auto p-5 border w-96 shadow-lg rounded-md bg-white">
-                        <div className="flex justify-between items-center mb-4">
-                            <h2 className="text-xl font-bold">{isEditing ? "Sửa voucher" : "Tạo voucher"}</h2>
-                            <button
-                                onClick={() => {
-                                    setIsModalOpen(false);
-                                    resetForm();
-                                }}
-                                className="text-gray-500 hover:text-gray-700"
-                            >
-                                ×
-                            </button>
-                        </div>
-                        <form onSubmit={handleSubmit}>
-                            <div className="space-y-4">
-                                <div>
-                                    <label className="block text-sm font-medium text-gray-700">Code</label>
-                                    <input
-                                        type="text"
-                                        name="code"
-                                        value={formData.code}
-                                        onChange={handleInputChange}
-                                        className="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500"
-                                    />
-                                    {errors.code && <p className="text-red-500 text-sm mt-1">{errors.code}</p>}
-                                </div>
-                                <div>
-                                    <label className="block text-sm font-medium text-gray-700">
-                                        Phần trăm giảm giá
-                                    </label>
-                                    <input
-                                        type="number"
-                                        name="discountPercentage"
-                                        value={formData.discountPercentage}
-                                        onChange={handleInputChange}
-                                        className="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500"
-                                    />
-                                    {errors.discountPercentage && (
-                                        <p className="text-red-500 text-sm mt-1">{errors.discountPercentage}</p>
-                                    )}
-                                </div>
-                                <div>
-                                    <label className="block text-sm font-medium text-gray-700">Hạn sử dụng</label>
-                                    <input
-                                        type="date"
-                                        name="expirationDate"
-                                        value={formData.expirationDate}
-                                        onChange={handleInputChange}
-                                        className="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500"
-                                    />
-                                    {errors.expirationDate && (
-                                        <p className="text-red-500 text-sm mt-1">{errors.expirationDate}</p>
-                                    )}
-                                </div>
-                                <div>
-                                    <label className="block text-sm font-medium text-gray-700">Số lượng</label>
-                                    <input
-                                        type="number"
-                                        name="quantity"
-                                        value={formData.quantity}
-                                        onChange={handleInputChange}
-                                        className="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500"
-                                    />
-                                    {errors.quantity && <p className="text-red-500 text-sm mt-1">{errors.quantity}</p>}
-                                </div>
-                                <button
-                                    type="submit"
-                                    className="w-full bg-blue-600 text-white px-4 py-2 rounded-lg hover:bg-blue-700"
-                                >
-                                    {isEditing ? "Cập nhật" : "Tạo"}
-                                </button>
-                            </div>
-                        </form>
+            <Modal isOpen={isCreateModalOpen} onClose={() => setIsCreateModalOpen(false)} title="Tạo voucher mới">
+                <form onSubmit={handleCreateVoucher} className="space-y-4">
+                    <div>
+                        <label className="block text-sm font-medium text-gray-700">Mã Voucher</label>
+                        <input
+                            type="text"
+                            required
+                            value={formData.code}
+                            onChange={(e) => setFormData((state) => ({ ...state, code: e.target.value }))}
+                            className="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500"
+                        />
                     </div>
-                </div>
-            )}
+                    <div>
+                        <label className="block text-sm font-medium text-gray-700">Phần trăm (%)</label>
+                        <input
+                            type="number"
+                            required
+                            min={0}
+                            max={100}
+                            value={formData.discountPercent}
+                            onChange={(e) => setFormData((state) => ({ ...state, discountPercent: e.target.value }))}
+                            className="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500"
+                        />
+                    </div>
+                    <div>
+                        <label className="block text-sm font-medium text-gray-700">Ngày hết hạn</label>
+                        <input
+                            type="date"
+                            required
+                            value={formData.expirationDate}
+                            onChange={(e) => setFormData((state) => ({ ...state, expirationDate: e.target.value }))}
+                            className="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500"
+                        />
+                    </div>
+                    <div>
+                        <label className="block text-sm font-medium text-gray-700">Số lượng</label>
+                        <input
+                            type="number"
+                            required
+                            min="1"
+                            value={formData.quantity}
+                            onChange={(e) => setFormData((state) => ({ ...state, quantity: e.target.value }))}
+                            className="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500"
+                        />
+                    </div>
+                    <button
+                        type="submit"
+                        disabled={loading}
+                        className="w-full bg-blue-500 text-white px-4 py-2 rounded-lg hover:bg-blue-600 disabled:bg-blue-300"
+                    >
+                        {loading ? "Đang tạo..." : "Tạo Voucher"}
+                    </button>
+                </form>
+            </Modal>
 
-            {/* Delete Confirmation Modal */}
-            {isDeleteModalOpen && (
-                <div className="fixed inset-0 bg-gray-600 bg-opacity-50 overflow-y-auto h-full w-full">
-                    <div className="relative top-20 mx-auto p-5 border w-96 shadow-lg rounded-md bg-white">
-                        <div className="mt-3 text-center">
-                            <div className="mx-auto flex items-center justify-center h-12 w-12 rounded-full bg-red-100">
-                                <FiAlertCircle className="h-6 w-6 text-red-600" />
+            <Modal isOpen={isEditModalOpen} onClose={() => setIsEditModalOpen(false)} title="Sửa Voucher">
+                <form onSubmit={handleEditVoucher} className="space-y-4">
+                    <div>
+                        <label className="block text-sm font-medium text-gray-700">Giảm giá (%)</label>
+                        <input
+                            type="number"
+                            required
+                            min="0"
+                            max="100"
+                            value={formData.discountPercent}
+                            onChange={(e) => setFormData((state) => ({ ...state, discountPercent: e.target.value }))}
+                            className="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500"
+                        />
+                    </div>
+                    <div>
+                        <label className="block text-sm font-medium text-gray-700">Ngày hết hạn</label>
+                        <input
+                            type="date"
+                            required
+                            value={formData.expirationDate}
+                            onChange={(e) => setFormData((state) => ({ ...state, expirationDate: e.target.value }))}
+                            className="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500"
+                        />
+                    </div>
+                    <div>
+                        <label className="block text-sm font-medium text-gray-700">Số lượng</label>
+                        <input
+                            type="number"
+                            required
+                            min="1"
+                            value={formData.quantity}
+                            onChange={(e) => setFormData((state) => ({ ...state, quantity: e.target.value }))}
+                            className="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500"
+                        />
+                    </div>
+                    <button
+                        type="submit"
+                        disabled={loading}
+                        className="w-full bg-green-500 text-white px-4 py-2 rounded-lg hover:bg-green-600 disabled:bg-green-300"
+                    >
+                        {loading ? "Đang cập nhật..." : "Cập nhật"}
+                    </button>
+                </form>
+            </Modal>
+
+            <Modal isOpen={isDeleteModalOpen} onClose={() => setIsDeleteModalOpen(false)} title="Delete Voucher">
+                <div className="space-y-4">
+                    <p>Bạn muốn xóa voucher?</p>
+                    <div className="flex gap-4">
+                        <button
+                            onClick={handleDeleteVoucher}
+                            disabled={loading}
+                            className="flex-1 bg-red-500 text-white px-4 py-2 rounded-lg hover:bg-red-600 disabled:bg-red-300"
+                        >
+                            {loading ? "Đang xóa..." : "Xóa"}
+                        </button>
+                        <button
+                            onClick={() => setIsDeleteModalOpen(false)}
+                            className="flex-1 bg-gray-500 text-white px-4 py-2 rounded-lg hover:bg-gray-600"
+                        >
+                            {" "}
+                            Hủy{" "}
+                        </button>
+                    </div>
+                </div>
+            </Modal>
+
+            <Modal isOpen={isViewModalOpen} onClose={() => setIsViewModalOpen(false)} title="Chi tiết">
+                {selectedVoucher && (
+                    <div className="space-y-4">
+                        <div>
+                            <h3 className="text-sm font-medium text-gray-700">Mã Voucher</h3>
+                            <p className="mt-1">{selectedVoucher.code}</p>
+                        </div>
+                        <div>
+                            <h3 className="text-sm font-medium text-gray-700">Giảm giá</h3>
+                            <p className="mt-1">{selectedVoucher.discountPercent}%</p>
+                        </div>
+                        <div>
+                            <h3 className="text-sm font-medium text-gray-700">Ngày hết hạn</h3>
+                            <p className="mt-1">{new Date(selectedVoucher.expirationDate).toLocaleDateString()}</p>
+                        </div>
+                        <div>
+                            <h3 className="text-sm font-medium text-gray-700">Số lượng</h3>
+                            <p className="mt-1">{selectedVoucher.quantity}</p>
+                        </div>
+                        <div>
+                            <h3 className="text-sm font-medium text-gray-700">Ngày tạo</h3>
+                            <p className="mt-1">{new Date(selectedVoucher.createdAt).toLocaleDateString()}</p>
+                        </div>
+                    </div>
+                )}
+            </Modal>
+
+            <Modal isOpen={isStatsModalOpen} onClose={() => setIsStatsModalOpen(false)} title="Voucher Statistics">
+                {stats && (
+                    <div className="space-y-4">
+                        <div className="grid grid-cols-2 gap-4">
+                            <div className="bg-blue-100 p-4 rounded-lg">
+                                <h3 className="text-sm font-medium text-gray-700">Tổng số lượng </h3>
+                                <p className="text-2xl font-bold text-blue-700">{stats.totalQuantity}</p>
                             </div>
-                            <h3 className="text-lg leading-6 font-medium text-gray-900 mt-4">Xóa voucher</h3>
-                            <div className="mt-2 px-7 py-3">
-                                <p className="text-sm text-gray-500">Bạn có chắc muốn xóa voucher này không?</p>
+                            <div className="bg-green-100 p-4 rounded-lg">
+                                <h3 className="text-sm font-medium text-gray-700">Đã sử dụng </h3>
+                                <p className="text-2xl font-bold text-green-700">{stats.usedCount}</p>
                             </div>
-                            <div className="flex justify-center mt-4 space-x-4">
-                                <button
-                                    onClick={() => handleDelete(selectedVoucher._id)}
-                                    className="bg-red-600 text-white px-4 py-2 rounded-lg hover:bg-red-700"
-                                >
-                                    Xóa
-                                </button>
-                                <button
-                                    onClick={() => setIsDeleteModalOpen(false)}
-                                    className="bg-gray-200 text-gray-800 px-4 py-2 rounded-lg hover:bg-gray-300"
-                                >
-                                    Hủy bỏ
-                                </button>
+                            <div className="bg-purple-100 p-4 rounded-lg">
+                                <h3 className="text-sm font-medium text-gray-700">Số lượng còn lại</h3>
+                                <p className="text-2xl font-bold text-purple-700">{stats.remainingCount}</p>
+                            </div>
+                            <div className="bg-orange-100 p-4 rounded-lg">
+                                <h3 className="text-sm font-medium text-gray-700">Tỷ lệ sử dụng</h3>
+                                <p className="text-2xl font-bold text-orange-700">
+                                    {Math.round((stats.usedCount / stats.totalQuantity) * 100)}%
+                                </p>
                             </div>
                         </div>
                     </div>
-                </div>
-            )}
+                )}
+            </Modal>
         </div>
     );
 };
 
-export default ManageVoucher;
+export default VoucherManagement;

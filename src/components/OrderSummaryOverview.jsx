@@ -76,73 +76,70 @@ const OrderSummaryOverview = () => {
     }, []);
 
     return (
-        <header className="flex gap-10 flex-wrap">
-            <div className="flex flex-1 min-w-fit justify-between items-center p-4 bg-white rounded-xl font-semibold shadow">
+        <header className="grid gap-6 grid-cols-1 md:grid-cols-3 lg:grid-cols-5 mb-4">
+            <div className="flex items-center justify-between p-6 bg-gradient-to-r from-blue-500 to-indigo-500 rounded-2xl shadow-lg text-white transition duration-300 hover:from-indigo-500 hover:to-blue-500">
                 <div>
-                    <p>Tổng số đơn hàng</p>
-                    <p className="text-lg">{orderSummary.totalOrders}</p>
+                    <p className="text-sm font-semibold">Tổng số đơn hàng</p>
+                    <p className="text-2xl font-bold">{orderSummary.totalOrders}</p>
                 </div>
-                <div className="w-14 object-cover">
-                    <FaShoppingCart size={30} />
+                <div className="w-16 h-16 flex justify-center items-center bg-white bg-opacity-20 rounded-full">
+                    <FaShoppingCart size={30} className="text-white" />
                 </div>
             </div>
-
-            <div className="flex flex-1 min-w-fit justify-between items-center p-4 bg-white rounded-xl font-semibold shadow">
+    
+            <div className="flex items-center justify-between p-6 bg-gradient-to-r from-green-500 to-emerald-500 rounded-2xl shadow-lg text-white transition duration-300 hover:from-emerald-500 hover:to-green-500">
                 <div>
-                    <p>Giá trị đơn trung bình</p>
-                    <p className="text-lg">
+                    <p className="text-sm font-semibold">Giá trị đơn trung bình</p>
+                    <p className="text-2xl font-bold">
                         {orderSummary.overallAverageValue.toLocaleString()} VNĐ
                     </p>
                 </div>
-                <div className="w-14 object-cover">
-                    <FaChartLine size={30} />
+                <div className="w-16 h-16 flex justify-center items-center bg-white bg-opacity-20 rounded-full">
+                    <FaChartLine size={30} className="text-white" />
                 </div>
             </div>
-
-            <div className="flex flex-1 min-w-fit justify-between items-center p-4 bg-white rounded-xl font-semibold shadow">
+    
+            <div className="flex items-center justify-between p-6 bg-gradient-to-r from-red-500 to-orange-500 rounded-2xl shadow-lg text-white transition duration-300 hover:from-orange-500 hover:to-red-500">
                 <div>
-                    <p>Đơn hàng thất bại</p>
-                    <p className="text-lg">{orderSummary.failureCount}</p>
+                    <p className="text-sm font-semibold">Đơn hàng thất bại</p>
+                    <p className="text-2xl font-bold">{orderSummary.failureCount}</p>
                     <p className="text-sm">
-                        Giá trị TB:{" "}
-                        {orderSummary.failureAverageValue.toLocaleString()} VNĐ
+                        Giá trị TB: {orderSummary.failureAverageValue.toLocaleString()} VNĐ
                     </p>
                 </div>
-                <div className="w-14 object-cover">
-                    <FaExclamationTriangle size={30} />
+                <div className="w-16 h-16 flex justify-center items-center bg-white bg-opacity-20 rounded-full">
+                    <FaExclamationTriangle size={30} className="text-white" />
                 </div>
             </div>
-
-            <div className="flex flex-1 min-w-fit justify-between items-center p-4 bg-white rounded-xl font-semibold shadow">
+    
+            <div className="flex items-center justify-between p-6 bg-gradient-to-r from-yellow-500 to-orange-500 rounded-2xl shadow-lg text-white transition duration-300 hover:from-orange-500 hover:to-yellow-500">
                 <div>
-                    <p>Đặt hàng thành công</p>
-                    <p className="text-lg">{orderSummary.orderSuccessCount}</p>
+                    <p className="text-sm font-semibold">Đặt hàng thành công</p>
+                    <p className="text-2xl font-bold">{orderSummary.orderSuccessCount}</p>
                     <p className="text-sm">
-                        Giá trị TB:{" "}
-                        {orderSummary.orderSuccessAverageValue.toLocaleString()}{" "}
-                        VNĐ
+                        Giá trị TB: {orderSummary.orderSuccessAverageValue.toLocaleString()} VNĐ
                     </p>
                 </div>
-                <div className="w-14 object-cover">
-                    <FaChartLine size={30} />
+                <div className="w-16 h-16 flex justify-center items-center bg-white bg-opacity-20 rounded-full">
+                    <FaChartLine size={30} className="text-white" />
                 </div>
             </div>
-
-            <div className="flex flex-1 min-w-fit justify-between items-center p-4 bg-white rounded-xl font-semibold shadow">
+    
+            <div className="flex items-center justify-between p-6 bg-gradient-to-r from-teal-500 to-green-500 rounded-2xl shadow-lg text-white transition duration-300 hover:from-green-500 hover:to-teal-500">
                 <div>
-                    <p>Giao hàng thành công</p>
-                    <p className="text-lg">{orderSummary.successCount}</p>
+                    <p className="text-sm font-semibold">Giao hàng thành công</p>
+                    <p className="text-2xl font-bold">{orderSummary.successCount}</p>
                     <p className="text-sm">
-                        Giá trị TB:{" "}
-                        {orderSummary.successAverageValue.toLocaleString()} VNĐ
+                        Giá trị TB: {orderSummary.successAverageValue.toLocaleString()} VNĐ
                     </p>
                 </div>
-                <div className="w-14 object-cover">
-                    <FaChartLine size={30} />
+                <div className="w-16 h-16 flex justify-center items-center bg-white bg-opacity-20 rounded-full">
+                    <FaChartLine size={30} className="text-white" />
                 </div>
             </div>
         </header>
     );
+    
 };
 
 export default OrderSummaryOverview;

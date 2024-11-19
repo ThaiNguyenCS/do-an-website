@@ -71,8 +71,8 @@ const Profile = () => {
         }
     };
     return (
-        <div className="sm:p-8 p-3 pt-0 text-[#444444]">
-            <div className="sm:flex block gap-12">
+        <div className="p-3 sm:p-8 pt-0 text-[#444444]">
+            <div className="flex flex-col gap-12 sm:grid sm:grid-cols-2">
                 {loadingUser ? (
                     <p>Loading...</p>
                 ) : errorMessage ? (
@@ -85,6 +85,7 @@ const Profile = () => {
             <ToastContainer />
         </div>
     );
+    
 };
 
 export default Profile;

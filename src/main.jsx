@@ -24,6 +24,8 @@ import ReportsScreen from "./components/ReportsScreen.jsx";
 import ManageVoucher from "./components/ManageVoucher.jsx";
 import Order from "./components/Order.jsx"
 import AdminSupport from "./components/AdminSupport.jsx";
+import AuthRedirectPage from "./components/AuthRedirectPage.jsx";
+
 const router = createBrowserRouter([
     {
         path: "/",
@@ -77,6 +79,10 @@ const router = createBrowserRouter([
                 path: "*",
                 element: <NotFoundScreen />, // Route 404
             },
+            {
+                path: "auth", 
+                element: <AuthRedirectPage />,  
+            },
         ],
     },
     {
@@ -106,7 +112,7 @@ const router = createBrowserRouter([
             },
             {
                 path: "reports",
-                element: <ReportsScreen />,
+                element: <ReportsScreen/>,
             },
             {
                 path: "orders",

@@ -40,38 +40,37 @@ const BusinessOverview = ({ selectedDate }) => {
     }, [selectedDate]);
 
     return (
-        <header className="flex gap-10 flex-wrap">
-            <div className="flex flex-1 min-w-fit justify-between items-center p-4 bg-white rounded-xl font-semibold shadow">
+        <header className="grid gap-6 grid-cols-1 md:grid-cols-3 mb-4">
+            <div className="flex items-center justify-between p-6 bg-gradient-to-r from-blue-500 to-indigo-500 rounded-2xl shadow-lg text-white transition duration-300 hover:from-indigo-500 hover:to-blue-500">
                 <div>
-                    <p>Tổng số người dùng</p>
-                    <p className="text-lg">{businessData.totalCustomers}</p>
+                    <p className="text-sm font-semibold">Tổng số người dùng</p>
+                    <p className="text-2xl font-bold">{businessData.totalCustomers}</p>
                 </div>
-                <div className="w-14 object-cover">
-                    <FaUser size={30} />
+                <div className="w-16 h-16 flex justify-center items-center bg-white bg-opacity-20 rounded-full">
+                    <FaUser size={30} className="text-white" />
                 </div>
             </div>
-
-            <div className="flex flex-1 min-w-fit justify-between items-center p-4 bg-white rounded-xl font-semibold shadow">
+            <div className="flex items-center justify-between p-6 bg-gradient-to-r from-teal-500 to-green-500 rounded-2xl shadow-lg text-white transition duration-300 hover:from-green-500 hover:to-teal-500">
                 <div>
-                    <p>Tổng doanh thu</p>
-                    <p className="text-lg">{businessData.totalRevenue} VNĐ</p>
+                    <p className="text-sm font-semibold">Tổng doanh thu</p>
+                    <p className="text-2xl font-bold">{businessData.totalRevenue} VNĐ</p>
                 </div>
-                <div className="w-14 object-cover">
-                    <FaDollarSign size={30} />
+                <div className="w-16 h-16 flex justify-center items-center bg-white bg-opacity-20 rounded-full">
+                    <FaDollarSign size={30} className="text-white" />
                 </div>
             </div>
-
-            <div className="flex flex-1 min-w-fit justify-between items-center p-4 bg-white rounded-xl font-semibold shadow">
+            <div className="flex items-center justify-between p-6 bg-gradient-to-r from-red-500 to-orange-500 rounded-2xl shadow-lg text-white transition duration-300 hover:from-orange-500 hover:to-red-500">
                 <div>
-                    <p>Tổng số đơn hàng</p>
-                    <p className="text-lg">{businessData.totalOrders}</p>
+                    <p className="text-sm font-semibold">Tổng số đơn hàng</p>
+                    <p className="text-2xl font-bold">{businessData.totalOrders}</p>
                 </div>
-                <div className="w-14 object-cover">
-                    <FaFileAlt size={30} />
+                <div className="w-16 h-16 flex justify-center items-center bg-white bg-opacity-20 rounded-full">
+                    <FaFileAlt size={30} className="text-white" />
                 </div>
             </div>
         </header>
     );
+    
 };
 
 export default BusinessOverview;
