@@ -280,8 +280,8 @@ const CustomerSupport = () => {
               allowClear
               suffixIcon={null} 
             >
-              <Option value="pending">Pending</Option>
-              <Option value="finish">Finish</Option>
+              <Option value="pending">Đang chờ</Option>
+              <Option value="finish">Đã phản hồi</Option>
             </Select>
           </div>
           <div className="overflow-x-auto mb-14">

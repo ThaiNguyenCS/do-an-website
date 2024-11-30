@@ -59,13 +59,7 @@ const VoucherManagement = () => {
         e.preventDefault();
         setLoading(true);
         try {
-            const formattedFormData = {
-                ...formData,
-                discountPercent: parseInt(formData.discountPercent),
-                quantity: parseInt(formData.quantity),
-            };
-
-            await axios.post(`${API_BASE_URL}/vouchers`, formattedFormData, {
+            await axios.post(`${API_BASE_URL}/vouchers`, formData, {
                 headers: {
                     Authorization: `Bearer ${localStorage.getItem("authToken")}`,
                 },
@@ -87,9 +81,9 @@ const VoucherManagement = () => {
             await axios.put(
                 `${API_BASE_URL}/vouchers/${selectedVoucher._id}`,
                 {
-                    discountPercent: parseInt(formData.discountPercent),
+                    discountPercent: formData.discountPercent,
                     expirationDate: formData.expirationDate,
-                    quantity: parseInt(formData.quantity),
+                    quantity: formData.quantity,
                 },
                 {
                     headers: {
@@ -159,8 +153,6 @@ const VoucherManagement = () => {
     };
 
     const Modal = ({ isOpen, onClose, title, children }) => {
-        console.log("Modal");
-
         if (!isOpen) return null;
         return (
             <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
@@ -280,48 +272,48 @@ const VoucherManagement = () => {
                 </table>
             </div>
 
-            <Modal isOpen={isCreateModalOpen} onClose={() => setIsCreateModalOpen(false)} title="Tạo voucher mới">
+            <Modal isOpen={isCreateModalOpen} onClose={() => setIsCreateModalOpen(false)} title="Create New Voucher">
                 <form onSubmit={handleCreateVoucher} className="space-y-4">
                     <div>
-                        <label className="block text-sm font-medium text-gray-700">Mã Voucher</label>
+                        <label className="block text-sm font-medium text-gray-700">Voucher Code</label>
                         <input
                             type="text"
                             required
                             value={formData.code}
-                            onChange={(e) => setFormData((state) => ({ ...state, code: e.target.value }))}
+                            onChange={(e) => setFormData({ ...formData, code: e.target.value })}
                             className="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500"
                         />
                     </div>
                     <div>
-                        <label className="block text-sm font-medium text-gray-700">Phần trăm (%)</label>
+                        <label className="block text-sm font-medium text-gray-700">Discount (%)</label>
                         <input
                             type="number"
                             required
-                            min={0}
-                            max={100}
+                            min="0"
+                            max="100"
                             value={formData.discountPercent}
-                            onChange={(e) => setFormData((state) => ({ ...state, discountPercent: e.target.value }))}
+                            onChange={(e) => setFormData({ ...formData, discountPercent: e.target.value })}
                             className="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500"
                         />
                     </div>
                     <div>
-                        <label className="block text-sm font-medium text-gray-700">Ngày hết hạn</label>
+                        <label className="block text-sm font-medium text-gray-700">Expiration Date</label>
                         <input
                             type="date"
                             required
                             value={formData.expirationDate}
-                            onChange={(e) => setFormData((state) => ({ ...state, expirationDate: e.target.value }))}
+                            onChange={(e) => setFormData({ ...formData, expirationDate: e.target.value })}
                             className="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500"
                         />
                     </div>
                     <div>
-                        <label className="block text-sm font-medium text-gray-700">Số lượng</label>
+                        <label className="block text-sm font-medium text-gray-700">Quantity</label>
                         <input
                             type="number"
                             required
                             min="1"
                             value={formData.quantity}
-                            onChange={(e) => setFormData((state) => ({ ...state, quantity: e.target.value }))}
+                            onChange={(e) => setFormData({ ...formData, quantity: e.target.value })}
                             className="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500"
                         />
                     </div>
@@ -330,55 +322,74 @@ const VoucherManagement = () => {
                         disabled={loading}
                         className="w-full bg-blue-500 text-white px-4 py-2 rounded-lg hover:bg-blue-600 disabled:bg-blue-300"
                     >
-                        {loading ? "Đang tạo..." : "Tạo Voucher"}
+                        {loading ? "Creating..." : "Create Voucher"}
                     </button>
                 </form>
             </Modal>
 
-            <Modal isOpen={isEditModalOpen} onClose={() => setIsEditModalOpen(false)} title="Sửa Voucher">
-                <form onSubmit={handleEditVoucher} className="space-y-4">
-                    <div>
-                        <label className="block text-sm font-medium text-gray-700">Giảm giá (%)</label>
-                        <input
-                            type="number"
-                            required
-                            min="0"
-                            max="100"
-                            value={formData.discountPercent}
-                            onChange={(e) => setFormData((state) => ({ ...state, discountPercent: e.target.value }))}
-                            className="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500"
-                        />
+            {/* <Modal isOpen={isEditModalOpen} onClose={() => setIsEditModalOpen(false)} title="Sửa Voucher"> */}
+            {isEditModalOpen ? (
+                <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
+                    <div className="bg-white rounded-lg p-6 w-full max-w-md">
+                        <div className="flex justify-between items-center mb-4">
+                            <h2 className="text-xl font-semibold">Sửa voucher</h2>
+                            <button onClick={() => setIsEditModalOpen()} className="text-gray-500 hover:text-gray-700">
+                                ×
+                            </button>
+                        </div>
+                        <form onSubmit={handleEditVoucher} className="space-y-4">
+                            <div>
+                                <label className="block text-sm font-medium text-gray-700">Giảm giá (%)</label>
+                                <input
+                                    type="number"
+                                    required
+                                    min="0"
+                                    max="100"
+                                    value={formData.discountPercent}
+                                    onChange={(e) =>
+                                        setFormData((state) => ({ ...state, discountPercent: e.target.value }))
+                                    }
+                                    className="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500"
+                                />
+                            </div>
+                            <div>
+                                <label className="block text-sm font-medium text-gray-700">Ngày hết hạn</label>
+                                <input
+                                    type="date"
+                                    required
+                                    value={formData.expirationDate}
+                                    onChange={(e) =>
+                                        setFormData((state) => ({ ...state, expirationDate: e.target.value }))
+                                    }
+                                    className="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500"
+                                />
+                            </div>
+                            <div>
+                                <label className="block text-sm font-medium text-gray-700">Số lượng</label>
+                                <input
+                                    type="number"
+                                    required
+                                    min="1"
+                                    value={formData.quantity}
+                                    onChange={(e) => setFormData((state) => ({ ...state, quantity: e.target.value }))}
+                                    className="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500"
+                                />
+                            </div>
+                            <button
+                                type="submit"
+                                disabled={loading}
+                                className="w-full bg-green-500 text-white px-4 py-2 rounded-lg hover:bg-green-600 disabled:bg-green-300"
+                            >
+                                {loading ? "Updating..." : "Update Voucher"}
+                            </button>
+                        </form>
                     </div>
-                    <div>
-                        <label className="block text-sm font-medium text-gray-700">Ngày hết hạn</label>
-                        <input
-                            type="date"
-                            required
-                            value={formData.expirationDate}
-                            onChange={(e) => setFormData((state) => ({ ...state, expirationDate: e.target.value }))}
-                            className="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500"
-                        />
-                    </div>
-                    <div>
-                        <label className="block text-sm font-medium text-gray-700">Số lượng</label>
-                        <input
-                            type="number"
-                            required
-                            min="1"
-                            value={formData.quantity}
-                            onChange={(e) => setFormData((state) => ({ ...state, quantity: e.target.value }))}
-                            className="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500"
-                        />
-                    </div>
-                    <button
-                        type="submit"
-                        disabled={loading}
-                        className="w-full bg-green-500 text-white px-4 py-2 rounded-lg hover:bg-green-600 disabled:bg-green-300"
-                    >
-                        {loading ? "Đang cập nhật..." : "Cập nhật"}
-                    </button>
-                </form>
-            </Modal>
+                </div>
+            ) : (
+                ""
+            )}
+
+            {/* </Modal> */}
 
             <Modal isOpen={isDeleteModalOpen} onClose={() => setIsDeleteModalOpen(false)} title="Delete Voucher">
                 <div className="space-y-4">
@@ -389,7 +400,7 @@ const VoucherManagement = () => {
                             disabled={loading}
                             className="flex-1 bg-red-500 text-white px-4 py-2 rounded-lg hover:bg-red-600 disabled:bg-red-300"
                         >
-                            {loading ? "Đang xóa..." : "Xóa"}
+                            {loading ? "Deleting..." : "Xóa"}
                         </button>
                         <button
                             onClick={() => setIsDeleteModalOpen(false)}

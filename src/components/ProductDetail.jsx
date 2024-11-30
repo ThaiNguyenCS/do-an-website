@@ -3,8 +3,8 @@ import { useParams } from "react-router-dom"; // Import useParams
 import { FaShoppingCart, FaStar, FaStarHalfAlt } from "react-icons/fa";
 import { BsChevronLeft, BsChevronRight } from "react-icons/bs";
 import axios from "axios";
-import {  getAuthConfig } from "../utils/axiosConfig";
-const apiURL = import.meta.env.VITE_API_URL
+import { getAuthConfig } from "../utils/axiosConfig";
+const apiURL = import.meta.env.VITE_API_URL;
 const ProductDetails = () => {
     const { productId } = useParams(); // Lấy productId từ URL
     const [currentImage, setCurrentImage] = useState(0);
@@ -158,11 +158,16 @@ const ProductDetails = () => {
 
                     <div className="mb-4">
                         <span className="text-2xl font-bold text-green-600">
-                            {product.price.toLocaleString("vi-VN", { style: "currency", currency: "VND" })}
+                            {product.promotionalPrice
+                                ? product.promotionalPrice.toLocaleString("vi-VN", {
+                                      style: "currency",
+                                      currency: "VND",
+                                  })
+                                : product.price.toLocaleString("vi-VN", { style: "currency", currency: "VND" })}
                         </span>
                         {product.promotionalPrice && (
                             <span className="ml-2 text-lg text-gray-500 line-through">
-                                {product.promotionalPrice.toLocaleString("vi-VN", {
+                                {product.price.toLocaleString("vi-VN", {
                                     style: "currency",
                                     currency: "VND",
                                 })}
@@ -222,7 +227,7 @@ const ProductDetails = () => {
 
                     <div className="mt-4">
                         <p>
-                            <strong>Danh mục:</strong> {product.category.name}
+                            <strong>Danh mục:</strong> {product.category?.name}
                         </p>
                         <p>
                             <strong>Tổng số lượng:</strong> {product.totalQuantity}

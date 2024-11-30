@@ -27,7 +27,7 @@ const loader = async ({ request, params }) => {
         const collectionSearchParam = urlMap[params.collectionName];
         const requestURL = new URL(request.url);
         const queryParams = new URLSearchParams(requestURL.search);
-        // queryParams.append("category", collectionSearchParam);
+        queryParams.append("category", collectionSearchParam);
         queryParams.append("limit", 20); // set default limit is 20
         let searchString = queryParams.toString();
         console.log("search string", searchString);
