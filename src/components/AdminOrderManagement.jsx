@@ -104,14 +104,15 @@ const [showOrderDetails, setShowOrderDetails] = useState(false); // Hiển thị
             `https://domstore.azurewebsites.net/api/v1/admin/orders/${orderId}`,
             authConfig
           );
-    
+          console.log(response.data)
           if (response.data.status === "success") {
-            setOrderDetails(response.data.data.order);
+            setSelectedOrder(response.data.data.order);
             toast.success("Fetched order details successfully!");
           } else {
             toast.error("Failed to fetch order details.");
           }
         } catch (err) {
+            console.log(err)
           toast.error("Error fetching order details.");
         }
       };
@@ -330,7 +331,7 @@ const [showOrderDetails, setShowOrderDetails] = useState(false); // Hiển thị
                                 ) : (
                                     <tr>
                                         <td colSpan="6" className="px-6 py-4 text-center text-gray-500">
-                                            No orders found
+                                            Không có đơn hàng nào
                                         </td>
                                     </tr>
                                 )}
