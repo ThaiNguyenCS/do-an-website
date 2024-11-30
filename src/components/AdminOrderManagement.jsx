@@ -7,6 +7,8 @@ import axios from "axios";
 import { formatPrice } from "../utils/formatter";
 
 const OrderManagement = () => {
+  const [selectedOrder, setSelectedOrder] = useState(null); // Lưu chi tiết đơn hàng
+const [showOrderDetails, setShowOrderDetails] = useState(false); // Hiển thị chi tiết đơn hàng
     const [orders, setOrders] = useState([]);
     const [loading, setLoading] = useState(false);
     const [error, setError] = useState(null);
@@ -95,7 +97,24 @@ const OrderManagement = () => {
             setLoading(false);
         }
     };
-
+    const fetchOrderDetails = async (orderId) => {
+        try {
+          const authConfig = getAuthConfig();
+          const response = await axios.get(
+            `https://domstore.azurewebsites.net/api/v1/admin/orders/${orderId}`,
+            authConfig
+          );
+    
+          if (response.data.status === "success") {
+            setOrderDetails(response.data.data.order);
+            toast.success("Fetched order details successfully!");
+          } else {
+            toast.error("Failed to fetch order details.");
+          }
+        } catch (err) {
+          toast.error("Error fetching order details.");
+        }
+      };
     const updateOrderStatus = async (orderId, newStatus) => {
         try {
             const authConfig = getAuthConfig();
@@ -262,7 +281,12 @@ const OrderManagement = () => {
                                 {orders && orders.length > 0 ? (
                                     orders.map((order) => (
                                         <tr key={order._id}>
-                                            <td className="px-6 py-4 whitespace-nowrap">{order._id}</td>
+                                            <td
+                                            className="px-6 py-4 whitespace-nowrap cursor-pointer text-blue-600 underline"
+                                            onClick={() => fetchOrderDetails(order._id)}
+                                            >
+                                            {order._id}
+                                            </td>
                                             <td className="px-6 py-4 whitespace-nowrap">
                                                 {format(new Date(order.createdAt), "dd/MM/yyyy")}
                                             </td>
@@ -315,6 +339,39 @@ const OrderManagement = () => {
                     </div>
                 </div>
             )}
+             {showOrderDetails && selectedOrder && (
+    <div className="fixed inset-0 bg-black bg-opacity-50 flex justify-center items-center">
+        <div className="bg-white rounded-lg shadow-lg w-full max-w-lg p-6 relative">
+            <button
+                onClick={() => setShowOrderDetails(false)}
+                className="absolute top-2 right-2 text-gray-600 hover:text-red-600"
+            >
+                &times;
+            </button>
+            <h2 className="text-xl font-bold mb-4">Chi tiết đơn hàng</h2>
+            <p><strong>Mã đơn hàng:</strong> {selectedOrder._id}</p>
+            <p><strong>Ngày đặt:</strong> {format(new Date(selectedOrder.createdAt), "dd/MM/yyyy")}</p>
+            <p><strong>Khách hàng:</strong> {selectedOrder.name}</p>
+            <p><strong>Tổng:</strong> {formatPrice(selectedOrder.totalPrice)}</p>
+            <p><strong>Trạng thái:</strong> {selectedOrder.status}</p>
+            
+            {/* Hiển thị các sản phẩm trong đơn hàng */}
+            <h3 className="text-lg font-semibold mt-4">Sản phẩm:</h3>
+            <ul className="list-disc pl-6">
+                {selectedOrder.products && selectedOrder.products.length > 0 ? (
+                    selectedOrder.products.map((product, index) => (
+                        <li key={index} className="mb-2">
+                            <p><strong>{product.name}</strong> (Số lượng: {product.quantity})</p>
+                            <p>{formatPrice(product.price)} x {product.quantity} = {formatPrice(product.price * product.quantity)}</p>
+                        </li>
+                    ))
+                ) : (
+                    <p>Không có sản phẩm trong đơn hàng này.</p>
+                )}
+            </ul>
+        </div>
+    </div>
+)}
 
             {/* Pagination */}
             <div className="mt-6 flex justify-between items-center">
