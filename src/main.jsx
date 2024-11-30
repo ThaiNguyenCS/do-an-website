@@ -25,6 +25,7 @@ import ManageVoucher from "./components/ManageVoucher.jsx";
 import Order from "./components/Order.jsx"
 import AdminSupport from "./components/AdminSupport.jsx";
 import AuthRedirectPage from "./components/AuthRedirectPage.jsx";
+import CustomerSupport from "./components/CustomerSupport.jsx";
 
 const router = createBrowserRouter([
     {
@@ -82,6 +83,10 @@ const router = createBrowserRouter([
             {
                 path: "auth", 
                 element: <AuthRedirectPage />,  
+            },
+            {
+                path: "supports", 
+                element: <CustomerSupport />,  
             },
         ],
     },

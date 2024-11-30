@@ -110,6 +110,11 @@ const Header = () => {
                                     <div className={styles["item"]} onClick={() => {navigate("/my-orders")}}>
                                         <span>Đơn hàng đã đặt</span>
                                     </div>
+                                    {appStatus?.role === "CUSTOMER" && (
+                                        <div className={styles["item"]} onClick={() => navigate("/supports")}>
+                                            <span>Hỗ trợ khách hàng</span>
+                                        </div>
+                                    )}
                                 </div>
                             </div>
                         </>
